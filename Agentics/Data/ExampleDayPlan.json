@@ -1,0 +1,47 @@
+{
+    "day_overview": "Take care of my farm and spend time with my family",
+    "actions": [
+        {
+            "action": "Harvest olives",
+            "emoji": "🫒",
+            "location": "Olive Orchard",
+            "duration": 180,
+            "priority": 0.8,
+            "subtasks": [
+                {
+                    "task": "Check olive ripeness",
+                    "emoji": "👀",
+                    "sub_location": "NORTH",
+                    "tool": "INSPECT"
+                },
+                {
+                    "task": "Collect ripe olives",
+                    "emoji": "🧺",
+                    "sub_location": "CENTER",
+                    "tool": "HARVEST"
+                }
+            ]
+        },
+        {
+            "action": "Ask Simichidas how his day is going",
+            "emoji": "💬",
+            "location": "Simichidas",
+            "duration": 60,
+            "priority": 0.5,
+            "subtasks": [
+                {
+                    "task": "Approach Simichidas",
+                    "emoji": "🚶",
+                    "sub_location": "NPC_SIMICHIDAS",
+                    "tool": "MOVE_TO"
+                },
+                {
+                    "task": "Start conversation",
+                    "emoji": "💭",
+                    "sub_location": "NPC_SIMICHIDAS",
+                    "tool": "INTERACT"
+                }
+            ]
+        }
+    ]
+}
