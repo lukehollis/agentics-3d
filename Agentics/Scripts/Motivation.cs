@@ -1,8 +1,9 @@
 using UnityEngine;
 using System;
 using Unity.MLAgents;
+using Agentics;
 
-namespace Agentics.Motivation
+namespace Agentics
 {
     [System.Serializable]
     public class EmotionalState
@@ -48,14 +49,14 @@ namespace Agentics.Motivation
         [SerializeField] private float motivationUpdateInterval = 0.5f;
         [SerializeField] private float emotionalInfluenceStrength = 0.3f;
 
-        private AgentBrain agentBrain;
-        private AgentRewardSystem rewardSystem;
+        private Brain agentBrain;
+        private RewardSystem rewardSystem;
         private float lastMotivationUpdate;
 
         private void Awake()
         {
-            agentBrain = GetComponent<AgentBrain>();
-            rewardSystem = GetComponent<AgentRewardSystem>();
+            agentBrain = GetComponent<Brain>();
+            rewardSystem = GetComponent<RewardSystem>();
         }
 
         private void Update()
@@ -229,6 +230,151 @@ namespace Agentics.Motivation
                     needs.achievement = Mathf.Clamp01(needs.achievement + amount);
                     break;
             }
+        }
+
+        public void ProcessPlanContext(string planOverview)
+        {
+            // Parse emotional context from the plan overview
+            bool containsPositive = planOverview.ToLower().Contains("happy") || 
+                                  planOverview.ToLower().Contains("excited") ||
+                                  planOverview.ToLower().Contains("good");
+                          
+            bool containsNegative = planOverview.ToLower().Contains("sad") ||
+                                   planOverview.ToLower().Contains("tired") ||
+                                   planOverview.ToLower().Contains("stressed");
+            
+            // Create emotional modification based on plan context
+            EmotionalState modification = new EmotionalState();
+            
+            if (containsPositive)
+            {
+                modification.happiness = 0.2f;
+                modification.energy = 0.1f;
+                modification.confidence = 0.1f;
+            }
+            
+            if (containsNegative)
+            {
+                modification.stress = 0.2f;
+                modification.energy = -0.1f;
+                modification.confidence = -0.1f;
+            }
+            
+            // Apply the emotional modifications
+            ModifyEmotions(modification);
+        }
+
+        public float GetEmotionalWeightForAction(string actionType)
+        {
+            float weight = 0f;
+            
+            switch (actionType.ToLower())
+            {
+                case "rest":
+                    weight += (1 - emotions.energy) * 0.4f;
+                    weight += emotions.stress * 0.3f;
+                    break;
+                    
+                case "eat":
+                    weight += needs.hunger * 0.5f;
+                    weight -= emotions.stress * 0.2f;
+                    break;
+                    
+                case "socialize":
+                    weight += emotions.socialNeed * 0.4f;
+                    weight += emotions.happiness * 0.2f;
+                    weight -= emotions.stress * 0.2f;
+                    break;
+                    
+                case "work":
+                    weight += needs.achievement * 0.3f;
+                    weight += emotions.confidence * 0.2f;
+                    weight += emotions.energy * 0.2f;
+                    break;
+                    
+                case "explore":
+                    weight += emotions.energy * 0.3f;
+                    weight += (1 - emotions.stress) * 0.2f;
+                    weight += emotions.confidence * 0.2f;
+                    break;
+            }
+            
+            // Personality influences
+            weight += (extraversion - 0.5f) * 0.1f; // More extraverted agents are slightly more motivated
+            weight -= neuroticism * 0.2f; // More neurotic agents are less motivated
+            weight += conscientiousness * 0.2f; // More conscientious agents are more motivated
+            
+            return Mathf.Clamp01(weight);
+        }
+
+        public float GetNeedWeightForAction(string actionType)
+        {
+            float weight = 0f;
+            
+            switch (actionType.ToLower())
+            {
+                case "rest":
+                    weight += (1 - needs.rest) * 0.6f;
+                    break;
+                    
+                case "eat":
+                    weight += needs.hunger * 0.7f;
+                    break;
+                    
+                case "comfort":
+                    weight += (1 - needs.comfort) * 0.4f;
+                    break;
+                    
+                case "work":
+                case "achieve":
+                    weight += (1 - needs.achievement) * 0.5f;
+                    break;
+            }
+            
+            return Mathf.Clamp01(weight);
+        }
+
+        public float GetActionCompletionBonus(string actionType)
+        {
+            float bonus = 0f;
+            
+            switch (actionType.ToLower())
+            {
+                case "rest":
+                    bonus += (1 - emotions.energy) * 0.4f;
+                    bonus += emotions.stress * 0.3f;
+                    break;
+                    
+                case "eat":
+                    bonus += needs.hunger * 0.5f;
+                    bonus -= emotions.stress * 0.2f;
+                    break;
+                    
+                case "socialize":
+                    bonus += emotions.socialNeed * 0.4f;
+                    bonus += emotions.happiness * 0.2f;
+                    bonus -= emotions.stress * 0.2f;
+                    break;
+                    
+                case "work":
+                    bonus += needs.achievement * 0.3f;
+                    bonus += emotions.confidence * 0.2f;
+                    bonus += emotions.energy * 0.2f;
+                    break;
+                    
+                case "explore":
+                    bonus += emotions.energy * 0.3f;
+                    bonus += (1 - emotions.stress) * 0.2f;
+                    bonus += emotions.confidence * 0.2f;
+                    break;
+            }
+            
+            // Personality influences
+            bonus += (extraversion - 0.5f) * 0.1f; // More extraverted agents are slightly more motivated
+            bonus -= neuroticism * 0.2f; // More neurotic agents are less motivated
+            bonus += conscientiousness * 0.2f; // More conscientious agents are more motivated
+            
+            return Mathf.Clamp01(bonus);
         }
     }
 }

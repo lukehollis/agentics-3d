@@ -2,8 +2,9 @@ using UnityEngine;
 using System;
 using System.Collections.Generic;
 using Unity.MLAgents;
+using Agentics;
 
-namespace Agentics.Planning
+namespace Agentics
 {
     [System.Serializable]
     public class AgentPlan
@@ -36,10 +37,10 @@ namespace Agentics.Planning
         public float completionStatus;
     }
 
-    public class AgentPlanSystem : MonoBehaviour
+    public class PlanSystem : MonoBehaviour
     {
-        private AgentBrain agentBrain;
-        private AgentRewardSystem rewardSystem;
+        private Brain agentBrain;
+        private RewardSystem rewardSystem;
         private MotivationSystem motivationSystem;
         
         [Header("Plan Settings")]
@@ -53,15 +54,14 @@ namespace Agentics.Planning
 
         private void Awake()
         {
-            agentBrain = GetComponent<AgentBrain>();
-            rewardSystem = GetComponent<AgentRewardSystem>();
+            agentBrain = GetComponent<Brain>();
+            rewardSystem = GetComponent<RewardSystem>();
             motivationSystem = GetComponent<MotivationSystem>();
         }
 
         public void ProcessNewPlan(string planJson)
         {
-            var dayPlan = JsonUtility.FromJson<DayPlan>(planJson);
-            currentPlan = ConvertToAgentPlan(dayPlan);
+            currentPlan = ConvertToAgentPlan(planJson);
             
             // Update motivation based on plan overview
             motivationSystem.ProcessPlanContext(currentPlan.overview);
@@ -107,6 +107,84 @@ namespace Agentics.Planning
             reward *= (1f + motivationBonus);
             
             agentBrain.AddReward(reward);
+        }
+
+        private AgentPlan ConvertToAgentPlan(string planJson)
+        {
+            var agentPlan = JsonUtility.FromJson<AgentPlan>(planJson);
+            
+            // Initialize any null collections
+            if (agentPlan.actions == null)
+                agentPlan.actions = new List<PlanAction>();
+            if (agentPlan.actionWeights == null)
+                agentPlan.actionWeights = new Dictionary<string, float>();
+
+            // Ensure all actions have initialized subtasks lists
+            foreach (var action in agentPlan.actions)
+            {
+                if (action.subtasks == null)
+                    action.subtasks = new List<ActionSubtask>();
+                    
+                // Initialize completion status if not set
+                action.completionStatus = 0f;
+            }
+
+            // Initialize overall completion rate
+            agentPlan.completionRate = 0f;
+
+            return agentPlan;
+        }
+
+        private float GetTimeBasedWeight(float duration)
+        {
+            // Get current hour from the game's timeline
+            int currentHour = Timeline.Instance.currentDate.Hour;
+            
+            // Base weight starts at 1.0
+            float weight = 1.0f;
+            
+            // Reduce priority for long duration tasks during non-optimal hours
+            if (currentHour >= 19 || currentHour < 6) // Night time
+            {
+                // Penalize long duration tasks at night
+                weight = Mathf.Lerp(1.0f, 0.2f, duration / planUpdateInterval);
+            }
+            else if (currentHour >= 6 && currentHour < 9) // Early morning
+            {
+                // Slightly favor shorter tasks in early morning
+                weight = Mathf.Lerp(1.0f, 0.6f, duration / planUpdateInterval);
+            }
+            else // Day time (9-19)
+            {
+                // Favor medium duration tasks during the day
+                float normalizedDuration = duration / planUpdateInterval;
+                weight = 1.0f - Mathf.Abs(normalizedDuration - 0.5f);
+            }
+            
+            return Mathf.Clamp01(weight);
+        }
+
+        private void UpdatePlanCompletionRate()
+        {
+            if (currentPlan == null || currentPlan.actions == null || currentPlan.actions.Count == 0)
+                return;
+
+            float totalCompletion = 0f;
+            float totalWeight = 0f;
+
+            foreach (var action in currentPlan.actions)
+            {
+                float weight = 1f;
+                if (currentPlan.actionWeights.ContainsKey(action.actionType))
+                {
+                    weight = currentPlan.actionWeights[action.actionType];
+                }
+
+                totalCompletion += action.completionStatus * weight;
+                totalWeight += weight;
+            }
+
+            currentPlan.completionRate = totalWeight > 0 ? totalCompletion / totalWeight : 0f;
         }
     }
 }

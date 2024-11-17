@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-namespace Agentics.Utils
+namespace Agentics
 {
     public static class AgentUtils
     {

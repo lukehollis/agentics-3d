@@ -2,10 +2,12 @@ using UnityEngine;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Linq;
 using Unity.MLAgents;
 using Unity.MLAgents.Sensors;
+using Agentics;
 
-namespace Agentics.Consciousness
+namespace Agentics
 {
     public class ConsciousnessSystem : MonoBehaviour
     {
@@ -16,8 +18,8 @@ namespace Agentics.Consciousness
         [SerializeField] private float minThoughtSalience = 0.3f;
 
         private MotivationSystem motivationSystem;
-        private AgentBrain agentBrain;
-        private AgentSensor agentSensor;
+        private Brain agentBrain;
+        private Sensor agentSensor;
         private InnerState innerState = new InnerState();
         private float lastIntrospectionTime;
 
@@ -45,8 +47,8 @@ namespace Agentics.Consciousness
         private void Awake()
         {
             motivationSystem = GetComponent<MotivationSystem>();
-            agentBrain = GetComponent<AgentBrain>();
-            agentSensor = GetComponent<AgentSensor>();
+            agentBrain = GetComponent<Brain>();
+            agentSensor = GetComponent<Sensor>();
         }
 
         private void Update()
@@ -96,7 +98,7 @@ namespace Agentics.Consciousness
 
         private void ProcessSensoryInput()
         {
-            // Get sensory observations from AgentSensor
+            // Get sensory observations from Sensor
             var gridState = agentSensor.GetObservationGrid();
             
             // Process environmental awareness
@@ -245,6 +247,29 @@ namespace Agentics.Consciousness
             // Add most salient thought's emotional charge
             var mostSalientThought = GetMostSalientThought();
             sensor.AddObservation(mostSalientThought?.emotionalCharge ?? 0f);
+        }
+
+        public float[] GetConsciousnessState()
+        {
+            var state = new List<float>();
+            
+            // Add basic consciousness metrics
+            state.Add(innerState.mentalClarity);
+            state.Add(innerState.attentionFocus);
+            
+            // Add thought-related metrics
+            state.Add(innerState.activeThoughts.Count / (float)maxActiveThoughts);
+            
+            // Add emotional state from most salient thought
+            var mostSalientThought = GetMostSalientThought();
+            state.Add(mostSalientThought?.emotionalCharge ?? 0f);
+            
+            // Add attention point
+            state.Add(innerState.attentionPoint.x);
+            state.Add(innerState.attentionPoint.y);
+            state.Add(innerState.attentionPoint.z);
+            
+            return state.ToArray();
         }
     }
 }

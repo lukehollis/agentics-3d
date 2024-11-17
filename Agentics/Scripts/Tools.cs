@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Agentics.Tools
+namespace Agentics
 {
     public interface IAgentTool
     {

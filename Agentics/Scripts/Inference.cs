@@ -4,8 +4,9 @@ using Unity.MLAgents.Sensors;
 using Unity.Barracuda;
 using System.Collections.Generic;
 using System;
+using Agentics;
 
-namespace Agentics.Inference
+namespace Agentics
 {
     public class WorldModelInference : MonoBehaviour 
     {
@@ -20,8 +21,8 @@ namespace Agentics.Inference
         [SerializeField] private int hiddenDimension = 256;
         [SerializeField] private float predictionHorizon = 1f;
         
-        private AgentBrain agentBrain;
-        private AgentSensor sensor;
+        private Brain agentBrain;
+        private Sensor sensor;
         private MotivationSystem motivation;
         private ConsciousnessSystem consciousness;
         
@@ -38,8 +39,8 @@ namespace Agentics.Inference
 
         private void Awake()
         {
-            agentBrain = GetComponent<AgentBrain>();
-            sensor = GetComponent<AgentSensor>();
+            agentBrain = GetComponent<Brain>();
+            sensor = GetComponent<Sensor>();
             motivation = GetComponent<MotivationSystem>();
             consciousness = GetComponent<ConsciousnessSystem>();
             
@@ -141,7 +142,26 @@ namespace Agentics.Inference
         {
             // Convert continuous actions to discrete if needed
             var discreteActions = ConvertToDiscreteActions(action);
-            agentBrain.RequestAction(discreteActions);
+            
+            // Create ActionBuffers with proper arrays
+            // var actionBuffers = new Unity.MLAgents.Actuators.ActionBuffers(
+            //     new int[] { discreteActions.Length },  // discrete action space shape
+            //     new float[] { action.Length }          // continuous action space shape
+            // );
+            
+            // // Set the actual actions
+            // for (int i = 0; i < discreteActions.Length; i++)
+            // {
+            //     actionBuffers.DiscreteActions[i] = discreteActions[i];
+            // }
+            
+            // for (int i = 0; i < action.Length; i++)
+            // {
+            //     actionBuffers.ContinuousActions[i] = action[i];
+            // }
+            
+            // // Send actions to the brain
+            // agentBrain.OnActionReceived(actionBuffers);
         }
 
         private int[] ConvertToDiscreteActions(float[] continuousActions)
@@ -201,7 +221,8 @@ namespace Agentics.Inference
                 {
                     inputs[input.Key].Dispose();
                 }
-                inputs[input.Key] = new Tensor(input.Value);
+                // Create tensor with shape [1, length] for batch size 1
+                inputs[input.Key] = new Tensor(1, input.Value.Length, input.Value);
             }
 
             // Execute model
