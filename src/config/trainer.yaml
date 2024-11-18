@@ -1,0 +1,86 @@
+defaults:
+  - _self_
+  - world_model: default
+  - actor_critic: default
+  - env: default
+  - datasets: default
+
+wandb:
+  mode: online
+  project: unity_world_models
+  entity: null
+  name: null
+  group: null
+  tags: null
+  notes: null
+
+initialization:
+  path_to_checkpoint: null
+  load_vae: False
+  load_world_model: False
+  load_actor_critic: False
+
+common:
+  epochs: 500
+  device: cuda:0
+  do_checkpoint: True
+  seed: 0
+  sequence_length: 32
+  resume: False
+
+collection:
+  train:
+    num_envs: 1
+    num_episodes: 1000
+    config:
+      epsilon: 0.01
+      should_sample: True
+      num_steps: 200
+  test:
+    num_envs: 4
+    num_episodes: 100
+    config:
+      epsilon: 0.0
+      should_sample: False
+      num_steps: 200
+
+training:
+  should: True
+  learning_rate: 1e-4
+  vae:
+    batch_size: 256
+    grad_acc_steps: 1
+    max_grad_norm: 10.0
+    start_after_epochs: 0
+    steps_per_epoch: 200
+  world_model:
+    batch_size: 64
+    grad_acc_steps: 1
+    max_grad_norm: 10.0
+    weight_decay: 0.01
+    start_after_epochs: 20
+    steps_per_epoch: 200
+  actor_critic:
+    batch_size: 64
+    grad_acc_steps: 1
+    max_grad_norm: 10.0
+    start_after_epochs: 40
+    steps_per_epoch: 200
+    imagine_horizon: ${common.sequence_length}
+    gamma: 0.99
+    lambda_: 0.95
+    entropy_weight: 0.001
+
+evaluation:
+  should: True
+  every: 5
+  num_episodes: 10
+  vae:
+    batch_size: ${training.vae.batch_size}
+    save_reconstructions: True
+  world_model:
+    batch_size: ${training.world_model.batch_size}
+    save_predictions: True
+  actor_critic:
+    num_episodes: 10
+    horizon: ${training.actor_critic.imagine_horizon}

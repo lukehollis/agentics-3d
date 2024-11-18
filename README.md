@@ -1,24 +1,24 @@
 # Unity Agentics - RL-Agents Based Character AI System
 
 
-This project implements world model training for Unity environments using the ML-Agents to OpenAI Gym wrapper. The goal is to train reinforcement learning agents efficiently by having them learn in a learned world model rather than directly in the environment.
+This project is a work-in-progress implementing world model training for Unity environments using the ML-Agents to OpenAI Gym wrapper. The goal is to train reinforcement learning agents efficiently by having them learn in a learned world model rather than directly in the environment.
 
-This is currently running the [Civilization Simulations](https://mused.com/explore/simulations/)
+![Rome Simulator](https://iiif.mused.com/rome_simulator_mused.jpg/0,240,2048,854/990,/0/default.jpg)
 
-
+This is currently running the [Civilization Simulations](https://mused.com/explore/simulations/).
 
 ## Overview
 
-World models allow agents to:
-- Learn environment dynamics from raw observations
-- Train policies efficiently in a learned simulation
-- Transfer learned behaviors back to the real environment
+I'm currently developing this to add depth of gameplay for my 2d civilization simulations, but it can be used for training generalist agents for simulations for other purposes. 
 
-We implement three key components based on modern world model approaches:
+The project implements three key components based on modern world model approaches:
 
 1. **Data Collection**: Gather experience from Unity environments using ML-Agents Gym wrapper
 2. **World Model Training**: Learn to predict next observations and rewards
 3. **Policy Training**: Train RL agents inside the learned world model
+
+Then the policy can be used in a Unity environment for controlling NPC behavior or other purposes.
+
 
 ## Getting Started
 
@@ -35,45 +35,31 @@ pip install -r requirements.txt
 
 ### Data Collection
 ```bash
-python src/collect_data.py
+python src/collect.py
 ```
 
-### World Model Training
+## Training
+
+The training process follows two main stages that can be run with a single command:
+
+
 ```bash
-python src/train_world_model.py
+python src/train.py 
 ```
 
-### Policy Training
-```bash
-python src/train_policy.py
-```
+This will automatically:
 
-## Implementation Details
+1. **Train World Model**: Updates the world model on collected experiences from the Unity environment to better predict next observations, rewards, and episode terminations. The world model combines a VAE for compact state representation with an MDN-RNN for dynamics prediction.
 
-The data collection pipeline follows best practices from recent world model papers:
+2. **Train Policy in Imagination**: Optimizes the agent's policy entirely inside the learned world model using actor-critic RL. This allows rapid policy improvement without additional environment interaction.
 
-- Observations are preprocessed to 64x64 pixels
-- Data is collected in sequences for temporal prediction
-- Separate train/validation splits are maintained
-- Both random and policy-driven data collection supported
 
-## License
-
-MIT
 
 # In Unity
 
-## Core Components
-- AgentBrain: Core ML-Agents implementation
-- AgentSensor: Environmental perception
-- AgentPlanSystem: Task and goal management
-- MotivationSystem: Emotional and needs simulation
-- ConsciousnessSystem: Internal state and thought processing
-- WorldModelInference: Predictive world modeling
-
 ## Getting Started
 0. Add the Agentics package to your Unity project
-1. Add the AgentBrain component to your character
+1. Add the Brain component to your character
 2. Configure required components (Sensor, Plan, Motivation, etc.)
 3. Set up training configuration with the python directory in the root of this repo
 4. Add example plans in Data directory and configure with NetworkingController [coming soon]
