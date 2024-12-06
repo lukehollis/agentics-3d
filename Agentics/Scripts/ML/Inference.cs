@@ -22,9 +22,9 @@ namespace Agentics
         [SerializeField] private float predictionHorizon = 1f;
         
         private Brain agentBrain;
-        private Sensor sensor;
+        private CharacterStateSensor characterStateSensor;
+        private WorldStateSensor worldStateSensor;
         private MotivationSystem motivation;
-        private ConsciousnessSystem consciousness;
         
         // Model execution components
         private ModelExecutor encoder;
@@ -40,9 +40,9 @@ namespace Agentics
         private void Awake()
         {
             agentBrain = GetComponent<Brain>();
-            sensor = GetComponent<Sensor>();
+            characterStateSensor = GetComponent<CharacterStateSensor>();
+            worldStateSensor = GetComponent<WorldStateSensor>();
             motivation = GetComponent<MotivationSystem>();
-            consciousness = GetComponent<ConsciousnessSystem>();
             
             observationHistory = new Queue<float[]>();
             
@@ -106,11 +106,11 @@ namespace Agentics
 
         private float[] GetCurrentObservation()
         {
-            var sensorData = sensor.GetObservationData();
+            var characterData = characterStateSensor.GetObservationData();
+            var worldData = worldStateSensor.GetObservationData();
             var motivationData = motivation.GetMotivationalContext();
-            var consciousnessData = consciousness.GetConsciousnessState();
             
-            return CombineObservations(sensorData, motivationData, consciousnessData);
+            return CombineObservations(characterData, worldData, motivationData);
         }
 
         private float[] GetContextVector()
@@ -124,7 +124,6 @@ namespace Agentics
             
             // Add agent state context
             context.AddRange(motivation.GetMotivationalContext());
-            context.AddRange(consciousness.GetConsciousnessState());
             
             return context.ToArray();
         }

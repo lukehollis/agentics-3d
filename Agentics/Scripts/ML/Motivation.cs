@@ -50,13 +50,11 @@ namespace Agentics
         [SerializeField] private float emotionalInfluenceStrength = 0.3f;
 
         private Brain agentBrain;
-        private RewardSystem rewardSystem;
         private float lastMotivationUpdate;
 
         private void Awake()
         {
             agentBrain = GetComponent<Brain>();
-            rewardSystem = GetComponent<RewardSystem>();
         }
 
         private void Update()
