@@ -5,7 +5,7 @@ This project is a work-in-progress implementing world model training for Unity e
 
 ![Rome Simulator](https://iiif.mused.com/rome_simulator_mused.jpg/0,240,2048,854/990,/0/default.jpg)
 
-This is currently running the [Civilization Simulations](https://mused.com/explore/simulations/).
+This is currently running the [Civilization Simulations](https://mused.com/explore/simulations/). You can also implement it easily with the [Happy Harvest](https://assetstore.unity.com/packages/essentials/tutorial-projects/happy-harvest-2d-sample-project-259218) 2d template from Unity.
 
 ## Overview
 

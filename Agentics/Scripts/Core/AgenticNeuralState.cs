@@ -3,7 +3,7 @@ using Unity.Collections;
 using Unity.Jobs;
 using System.Collections.Generic;
 
-namespace Agentics.Core
+namespace Agentics
 {
     /// <summary>
     /// Manages the neural state for a single character

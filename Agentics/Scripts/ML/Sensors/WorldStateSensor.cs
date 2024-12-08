@@ -2,7 +2,7 @@ using UnityEngine;
 using Unity.MLAgents.Sensors;
 using UnityEngine.AI;
 using System.Collections.Generic;
-using Agentics.Core;
+using Agentics;
 
 namespace Agentics
 {

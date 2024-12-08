@@ -2,33 +2,9 @@
     "action_overview": "Tend to the wheatfields",
     "tasks": [
         {
-            "action": "Dig well",
-            "emoji": "⛏️",
-            "sub_location": "NORTH",
-            "tool": "CREATE_TILE",
-            "tool_args": {
-                "tile_description": "A deep well with a bucket and a rope on a pulley."
-            }
-        },
-        {
             "action": "Water the wheatfields",
             "emoji": "💧",
-            "sub_location": "EAST",
-            "tool": "USE_WELL",
-            "tool_args": {
-                "target_area": "wheatfield",
-                "amount": "moderate"
-            }
-        },
-        {
-            "action": "Greet the new stranger to our farm",
-            "emoji": "💬",
-            "sub_location": "PLAYER",
-            "tool": "INTERACT",
-            "tool_args": {
-                "interaction_type": "greeting",
-                "mood": "friendly"
-            }
+            "animation": "watering"
         }
     ]
 }

@@ -1,10 +1,11 @@
 using UnityEngine;
 using UnityEngine.AI;
 using System.Collections;
-using ManaSeedTools.CharacterAnimator;
 using System.Collections.Generic;
+using Agentics;
 
-namespace Agentics.Core
+
+namespace Agentics
 {
     [RequireComponent(typeof(AgenticCharacter))]
     [RequireComponent(typeof(NavMeshAgent))]
@@ -44,6 +45,35 @@ namespace Agentics.Core
         public float taskDuration = 30f;
 
         protected Animator animator;
+
+        public enum NPCAnimation
+        {
+            // Movement
+            Idle,
+            Walk,
+            Run,
+            Jump,
+            Climb,
+            
+            // Actions
+            Craft,
+            Fish,
+            Hack,
+            Throw,
+            Water,
+            Lift,
+            Pull,
+            Push,
+            
+            // States
+            Sleep,
+            Shock,
+            Idle2,
+            SideGlance,
+            ToeTap,
+            SitStool,
+            SitGround
+        }
 
         protected virtual void Awake()
         {
@@ -141,24 +171,29 @@ namespace Agentics.Core
 
         protected virtual IEnumerator ExecuteTask(ActionTask task)
         {
-            // Show task indicator if available
             if (taskIndicator != null)
             {
-                // First verify we have the TextMeshProUGUI component directly
                 var tmpText = taskIndicator.GetComponentInChildren<TMPro.TMP_Text>();
                 if (tmpText != null) 
                 {
                     taskIndicator.SetActive(true);
-                    // tmpText.text = task.emoji;
                 }
-                else
-                {
-                    Debug.LogWarning("No TextMeshProUGUI component found in taskIndicator or its children");
-                }
+            }
+
+            // Trigger the animation
+            if (animator != null)
+            {
+                animator.SetTrigger(task.animation);
             }
 
             // Wait for task duration
             yield return new WaitForSeconds(taskDuration);
+
+            // Return to idle
+            if (animator != null)
+            {
+                animator.SetTrigger("idle");
+            }
 
             if (taskIndicator != null)
             {
@@ -273,6 +308,33 @@ namespace Agentics.Core
                 SetDestination(interruptedDestination.Value);
                 wasNavigating = false;
                 interruptedDestination = null;
+            }
+        }
+
+        public virtual void SetDialogState(bool inDialog)
+        {
+            isInDialog = inDialog;
+            
+            // If entering dialog, store current state
+            if (inDialog)
+            {
+                if (agent.hasPath)
+                {
+                    interruptedDestination = agent.destination;
+                    wasNavigating = true;
+                }
+                agent.isStopped = true;
+            }
+            // If exiting dialog, restore previous state
+            else
+            {
+                agent.isStopped = false;
+                if (wasNavigating && interruptedDestination.HasValue)
+                {
+                    SetDestination(interruptedDestination.Value);
+                    wasNavigating = false;
+                    interruptedDestination = null;
+                }
             }
         }
 

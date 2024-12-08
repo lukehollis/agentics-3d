@@ -6,19 +6,18 @@
             "emoji": "🫒",
             "location": "Olive Orchard",
             "duration": 180,
-            "priority": 0.8,
             "subtasks": [
                 {
                     "task": "Check olive ripeness",
                     "emoji": "👀",
                     "sub_location": "NORTH",
-                    "tool": "INSPECT"
+                    "animation": "idle" 
                 },
                 {
                     "task": "Collect ripe olives",
                     "emoji": "🧺",
                     "sub_location": "CENTER",
-                    "tool": "HARVEST"
+                    "animation": "hacking"
                 }
             ]
         },
@@ -27,19 +26,11 @@
             "emoji": "💬",
             "location": "Simichidas",
             "duration": 60,
-            "priority": 0.5,
             "subtasks": [
-                {
-                    "task": "Approach Simichidas",
-                    "emoji": "🚶",
-                    "sub_location": "NPC_SIMICHIDAS",
-                    "tool": "MOVE_TO"
-                },
                 {
                     "task": "Start conversation",
                     "emoji": "💭",
-                    "sub_location": "NPC_SIMICHIDAS",
-                    "tool": "INTERACT"
+                    "animation": "idle"
                 }
             ]
         }
