@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Agentics;
 
 namespace Agentics
 {
@@ -8,47 +9,55 @@ namespace Agentics
 	public class Inventory
 	{
 		public string Name { get; private set; }
-		public int MaxSlots { get; private set; }
+		public int MaxItems { get; private set; }
 		
 		[SerializeField]
-		private List<InventorySlot> slots;
+		public List<InventoryItem> items;
+
+    	public Item activeItem;
 		
 		public event Action OnInventoryChanged;
+		public event Action OnActiveItemChanged;
+		
+		public IReadOnlyList<InventoryItem> Items => items;
 
-		public Inventory(string name, int maxSlots)
+		public Inventory(string name, int maxItems)
 		{
 			Name = name;
-			MaxSlots = maxSlots;
-			slots = new List<InventorySlot>();
-			
-			for (int i = 0; i < maxSlots; i++)
-			{
-				slots.Add(new InventorySlot());
-			}
+			MaxItems = maxItems;
+			items = new List<InventoryItem>();
 		}
 
 		public bool AddItem(Item item, int quantity = 1)
 		{
+			Debug.Log("Adding item: " + item.name + " with quantity: " + quantity);
+			Debug.Log("OnInventoryChanged: " + OnInventoryChanged);
+
 			// First try to stack with existing items
-			for (int i = 0; i < slots.Count; i++)
+			var existingItem = items.Find(i => i.Item == item && i.CanAddQuantity(quantity));
+			if (existingItem != null)
 			{
-				if (slots[i].Item == item && slots[i].CanAddItems(quantity))
-				{
-					slots[i].AddItems(item, quantity);
-					OnInventoryChanged?.Invoke();
-					return true;
-				}
+				Debug.Log("Found existing item: " + existingItem.Item.name + " with quantity: " + existingItem.Quantity);
+				existingItem.AddQuantity(quantity);
+				OnInventoryChanged?.Invoke();
+				return true;
 			}
 
-			// Then try to find empty slot
-			for (int i = 0; i < slots.Count; i++)
+			// Then try to add as new item if we haven't reached max items
+			if (items.Count < MaxItems)
 			{
-				if (slots[i].IsEmpty)
+				Debug.Log("Adding new item: " + item.name + " with quantity: " + quantity);
+				items.Add(new InventoryItem(item, quantity));
+				
+				// If this is the first item being added, set it as the active item
+				if (items.Count == 1 && activeItem == null)
 				{
-					slots[i].AddItems(item, quantity);
-					OnInventoryChanged?.Invoke();
-					return true;
+					activeItem = item;
+					OnActiveItemChanged?.Invoke();
 				}
+				
+				OnInventoryChanged?.Invoke();
+				return true;
 			}
 
 			return false;
@@ -56,51 +65,43 @@ namespace Agentics
 
 		public bool RemoveItem(Item item, int quantity = 1)
 		{
-			for (int i = 0; i < slots.Count; i++)
+			var inventoryItem = items.Find(i => i.Item == item);
+			if (inventoryItem != null)
 			{
-				if (slots[i].Item == item && !slots[i].IsEmpty)
+				if (inventoryItem.Quantity <= quantity)
 				{
-					if (slots[i].RemoveItems(quantity))
-					{
-						OnInventoryChanged?.Invoke();
-						return true;
-					}
+					items.Remove(inventoryItem);
 				}
+				else
+				{
+					inventoryItem.RemoveQuantity(quantity);
+				}
+				OnInventoryChanged?.Invoke();
+				return true;
 			}
 			return false;
-		}
-
-		public InventorySlot GetSlot(int index)
-		{
-			if (index < 0 || index >= slots.Count) return null;
-			return slots[index];
 		}
 
 		public int GetItemCount(Item item)
 		{
-			int count = 0;
-			foreach (var slot in slots)
-			{
-				if (slot.Item == item)
-					count += slot.Quantity;
-			}
-			return count;
+			var inventoryItem = items.Find(i => i.Item == item);
+			return inventoryItem?.Quantity ?? 0;
 		}
 
-		public bool DropItem(Item item, int quantity = 1)
-		{
-			for (int i = 0; i < slots.Count; i++)
-			{
-				if (slots[i].Item == item && !slots[i].IsEmpty)
-				{
-					if (slots[i].RemoveItems(quantity))
-					{
-						OnInventoryChanged?.Invoke();
-						return true;
-					}
-				}
-			}
-			return false;
-		}
+        public Item GetActiveItem()
+        {
+            // If no active item is set but inventory has items, use the first one
+            if (activeItem == null && items.Count > 0)
+            {
+                activeItem = items[0].Item;
+            }
+            return activeItem;
+        }
+
+        public void SetActiveItem(Item item)
+        {
+            activeItem = item;
+            OnActiveItemChanged?.Invoke();
+        }
 	}
 }

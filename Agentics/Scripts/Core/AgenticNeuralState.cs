@@ -151,11 +151,15 @@ namespace Agentics
             if (needs.energy < 20f)
             {
                 // character.SetState(PixelHeroAnimationState.Dead); // Use for exhausted
+                controller.SpeedMultiplier = 0.3f; // Severely reduced speed
             }
             else if (needs.energy < 40f)
             {
-                // Maybe slow down movement speed
-                controller.moveSpeed = controller.moveSpeed * 0.7f;
+                controller.SpeedMultiplier = 0.7f; // Reduced speed
+            }
+            else
+            {
+                controller.SpeedMultiplier = 1f; // Normal speed
             }
 
             // Update day plan based on urgent needs

@@ -1,70 +1,40 @@
 using UnityEngine;
 
-public class MovementAnimationController : MonoBehaviour
+namespace Agentics
 {
-    private Animator animator;
-    
-    // Animation parameter names - can be customized per project
-    [Header("Animation Parameters")]
-    [SerializeField] private string horizontalInputParam = "xInput";
-    [SerializeField] private string verticalInputParam = "yInput";
-    [SerializeField] private string isWalkingParam = "isWalking";
-    [SerializeField] private string isRunningParam = "isRunning";
-    [SerializeField] private string directionParam = "direction";
-    [SerializeField] private string idleParam = "idle";
-
-    private void Awake()
+    public abstract class MovementAnimationControl : MonoBehaviour
     {
-        animator = GetComponent<Animator>();
-        ValidateParameters();
+        protected Animator animator;
+
+        protected virtual void Awake()
+        {
+            animator = GetComponent<Animator>();
+        }
+
+        public abstract void SetAnimationParameters(float inputX, float inputY, MoveType moveType, Direction direction);
     }
 
-    private void ValidateParameters()
+    public class MovementAnimationControl2D : MovementAnimationControl
     {
-        if (animator == null)
+        public override void SetAnimationParameters(float inputX, float inputY, MoveType moveType, Direction direction)
         {
-            Debug.LogError($"No Animator component found on {gameObject.name}");
-            enabled = false;
-            return;
+            animator.SetFloat("xInput", inputX);
+            animator.SetFloat("yInput", inputY);
+            animator.SetInteger("direction", (int)direction);
+
+            animator.SetBool("isWalking", moveType == MoveType.Walking);
+            animator.SetBool("isRunning", moveType == MoveType.Running);
         }
     }
 
-    /// <summary>
-    /// Updates the animation state based on movement input and type
-    /// </summary>
-    /// <param name="inputX">Horizontal input (-1 to 1)</param>
-    /// <param name="inputY">Vertical input (-1 to 1)</param>
-    /// <param name="moveType">Type of movement (idle, walking, running)</param>
-    /// <param name="direction">Direction the character is facing</param>
-    public void UpdateAnimationState(float inputX, float inputY, MovementType moveType, Direction direction)
+    public class MovementAnimationControl3D : MovementAnimationControl
     {
-        if (animator == null) return;
-
-        // Update movement inputs
-        animator.SetFloat(horizontalInputParam, inputX);
-        animator.SetFloat(verticalInputParam, inputY);
-
-        // Update movement state
-        switch (moveType)
+        public override void SetAnimationParameters(float inputX, float inputY, MoveType moveType, Direction direction)
         {
-            case MovementType.Walking:
-                animator.SetBool(isWalkingParam, true);
-                animator.SetBool(isRunningParam, false);
-                break;
-
-            case MovementType.Running:
-                animator.SetBool(isWalkingParam, false);
-                animator.SetBool(isRunningParam, true);
-                break;
-
-            case MovementType.Idle:
-                animator.SetBool(isWalkingParam, false);
-                animator.SetBool(isRunningParam, false);
-                animator.SetTrigger(idleParam);
-                break;
+            float speed = new Vector2(inputX, inputY).magnitude;
+            animator.SetFloat("Speed", speed);
+            animator.SetBool("IsWalking", moveType == MoveType.Walking);
+            animator.SetBool("IsRunning", moveType == MoveType.Running);
         }
-
-        // Update direction
-        animator.SetInteger(directionParam, (int)direction);
     }
 }

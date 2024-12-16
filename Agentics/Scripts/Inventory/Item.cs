@@ -4,10 +4,8 @@ namespace Agentics
 {
     public abstract class Item : ScriptableObject, IDatabaseEntry
     {
-        public string Key => UniqueID;
+        public string Key => DisplayName;
         
-        [Tooltip("Unique identifier used in the database and save system")]
-        public string UniqueID = "DefaultID";
         
         public string DisplayName;
         public Sprite ItemSprite;

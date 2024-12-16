@@ -146,14 +146,14 @@ namespace Agentics
             );
 
             float closestDistance = float.MaxValue;
-            IInteractable closestInteractable = null;
+            Interactable closestInteractable = null;
 
             foreach (Collider2D obj in nearbyObjects)
             {
                 float distance = Vector3.Distance(transform.position, obj.transform.position);
                 if (distance < closestDistance)
                 {
-                    var interactable = obj.GetComponent<IInteractable>();
+                    var interactable = obj.GetComponent<Interactable>();
                     if (interactable != null)
                     {
                         closestDistance = distance;

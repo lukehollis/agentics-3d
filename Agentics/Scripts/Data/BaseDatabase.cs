@@ -9,7 +9,7 @@ using Agentics;
 /// This is a modified version of the original from HappyHarvest.
 /// This is a base class that allow to define a Database that will link a name/string id to a given object.
 /// Useful for thing like linking item to their id so we can retrieve an item by its id (e.g. when reading save).
-/// See ItemDatabase and CropDatabase for sample of how those are created.
+/// See ItemDatabase for sample of how those are created.
 /// </summary>
 
 
@@ -23,7 +23,7 @@ namespace Agentics {
     /// <summary>
     /// This is a base class that allow to define a Database that will link a name/string id to a given object.
     /// Useful for thing like linking item to their id so we can retrieve an item by its id (e.g. when reading save).
-    /// See ItemDatabase and CropDatabase for sample of how those are created.
+    /// See ItemDatabase for sample of how those are created.
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public abstract class BaseDatabase<T> : ScriptableObject where T: class, IDatabaseEntry

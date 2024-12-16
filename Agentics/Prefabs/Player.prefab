@@ -10202,10 +10202,9 @@ GameObject:
   - component: {fileID: 1691853160354941208}
   - component: {fileID: 7986919192423046177}
   - component: {fileID: 7175560364678574344}
-  - component: {fileID: 2324836328681040779}
   - component: {fileID: 2022535118680402510}
   - component: {fileID: 4978973617780739515}
-  - component: {fileID: 418348310954902813}
+  - component: {fileID: 8829643057190650353}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -10379,18 +10378,6 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!114 &2324836328681040779
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3268476646770651585}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d7a1bcf839366d54dada3bd868edd86b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &2022535118680402510
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10429,8 +10416,8 @@ MonoBehaviour:
   bodyT: {fileID: 2800000, guid: c99e46bf458224d0babf63a46d2c3c3d, type: 3}
   outfitT: {fileID: 2800000, guid: a6a4f04f0de814a599f4a0dbaa75c486, type: 3}
   cloakT: {fileID: 0}
-  faceitemsT: {fileID: 2800000, guid: edc797ab805a747b18a5afd95f0a4c8d, type: 3}
-  hairT: {fileID: 2800000, guid: 693810ee61106422d9c3cc3530676065, type: 3}
+  faceitemsT: {fileID: 0}
+  hairT: {fileID: 2800000, guid: 089c9329e1a764d02aea65548d053bf7, type: 3}
   hatT: {fileID: 0}
   pritoolT: {fileID: 0}
   sectoolT: {fileID: 0}
@@ -10442,9 +10429,10 @@ MonoBehaviour:
   offhandBowT: {fileID: 0}
   SpriteSetPath: Importer/Sprites/character_base/char_a_p1/
   cursorIndicator: {fileID: 0}
-  agent: {fileID: 0}
-  inventoryManager: {fileID: 0}
---- !u!114 &418348310954902813
+  agent: {fileID: 7175560364678574344}
+  inventory:
+    slots: []
+--- !u!114 &8829643057190650353
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -10453,15 +10441,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 3268476646770651585}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6503632aac1b0574abf7e05b920c7b84, type: 3}
+  m_Script: {fileID: 11500000, guid: c9813bcabdd444af9a4c13d057f86acf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  backpack:
-    slots: []
-  backpackSlotCount: 0
-  toolbar:
-    slots: []
-  toolbarSlotCount: 0
 --- !u!1 &3502431391193268903
 GameObject:
   m_ObjectHideFlags: 0

@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Agentics
 {
-    public interface IInteractable
+    public interface Interactable
     {
         void Interact();
     }

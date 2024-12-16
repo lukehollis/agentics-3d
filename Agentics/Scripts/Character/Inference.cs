@@ -193,6 +193,31 @@ namespace Agentics
             
             return combined;
         }
+
+        private void UpdateRNNPredictions(float[] latentState, float[] context)
+        {
+            var predictions = new List<float[]>();
+            var currentHidden = currentHiddenState;
+            
+            // Predict forward for predictionHorizon seconds
+            int steps = Mathf.RoundToInt(predictionHorizon / Time.fixedDeltaTime);
+            
+            for (int i = 0; i < steps; i++)
+            {
+                var rnnInputs = new Dictionary<string, float[]> {
+                    { "latent_state", latentState },
+                    { "hidden_state", currentHidden },
+                    { "context", context }
+                };
+                
+                var outputs = rnn.Execute(rnnInputs);
+                currentHidden = outputs["hidden_state"];
+                predictions.Add(outputs["predicted_latent"]);
+            }
+            
+            // Use predictions for planning or visualization
+            // ...
+        }
     }
 
     public class ModelExecutor
