@@ -1,15 +1,19 @@
 # Unity Agentics - RL-Agents Based Character AI System
 
 
-This project is a work-in-progress implementing world model training for Unity environments using the ML-Agents to OpenAI Gym wrapper. The goal is to train reinforcement learning agents efficiently by having them learn in a learned world model rather than directly in the environment.
+This project is a work-in-progress implementing world model training for Unity environments using the ML-Agents to OpenAI Gym wrapper to build realistic human simulations. The goal is to train reinforcement learning agents efficiently by having them learn in a world model rather than directly in the environment so that they have a persistent inner state, and then use their policy to make decisions in the environment.
 
 ![Rome Simulator](https://iiif.mused.com/rome_simulator_mused.jpg/0,240,2048,854/990,/0/default.jpg)
 
-This is currently running the [Civilization Simulations](https://mused.com/explore/simulations/). You can also implement it easily with the [Happy Harvest](https://assetstore.unity.com/packages/essentials/tutorial-projects/happy-harvest-2d-sample-project-259218) 2d template from Unity.
+This is currently running the [Civilization Simulations](https://mused.com/explore/simulations/), simulating human history. You can also implement it easily with the [Happy Harvest](https://assetstore.unity.com/packages/essentials/tutorial-projects/happy-harvest-2d-sample-project-259218) 2d template from Unity.
+
+![BART Digital Twin](https://iiif.mused.com/digital_twin_bart.jpg/0,240,2048,854/990,/0/default.jpg)
+
+Now the package is also functional in 3D, used in the BART Digital Twin simulation project. [link soon](#)
 
 ## Overview
 
-I'm currently developing this to add depth of gameplay for my 2d civilization simulations, but it can be used for training generalist agents for simulations for other purposes. 
+I'm currently developing this to build digital twins of real world systems, modern and historical, but it can be used for training Generalist Agents for simulations for other purposes. 
 
 The project implements three key components based on modern world model approaches:
 
