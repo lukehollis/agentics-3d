@@ -37,7 +37,7 @@ public class SimulationController : MonoBehaviour
     // Inventory System References
     [Header("Inventory System")]
     [SerializeField] public ItemDatabase itemDatabase;
-    public Player3D player;
+    public Player player;
     public UIManager uiManager;
 
     // Time Management
@@ -48,10 +48,6 @@ public class SimulationController : MonoBehaviour
     [Header("Environment")]
     [SerializeField] private EnvironmentManager environmentManager;
     public EnvironmentManager EnvironmentManager => environmentManager;
-
-    // Add this field with the other serialized fields
-    [SerializeField] private Tilemap walkSurfaceTilemap;
-    public Tilemap WalkSurfaceTilemap => walkSurfaceTilemap;
 
     // Add this with other serialized fields around line 37-42
     [SerializeField] private InventoryController inventoryController;

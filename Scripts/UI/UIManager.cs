@@ -2,8 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.InputSystem;
 using Agentics;
-
 
 public class UIManager : MonoBehaviour
 {
@@ -20,6 +20,12 @@ public class UIManager : MonoBehaviour
 	public static UnityEngine.UI.Image draggedIcon;
 	public static bool dragStack;
 
+	private Keyboard keyboard;
+
+	void Awake()
+	{
+		keyboard = Keyboard.current;
+	}
 
 	void Start()
 	{
@@ -36,25 +42,23 @@ public class UIManager : MonoBehaviour
 
 	void Update()
 	{
-        if (Input.GetKeyDown(KeyCode.Tab) || Input.GetKeyDown(KeyCode.B))
-        	// ToggleInventoryUI();
-        if (Input.GetKey(KeyCode.LeftShift))
-        	dragStack = true;
-        else
-        	dragStack = false;
+		if (keyboard.tabKey.wasPressedThisFrame || keyboard.bKey.wasPressedThisFrame)
+			ToggleInventoryUI();
+			
+		dragStack = keyboard.leftShiftKey.isPressed;
 	}
 
 	public void ToggleInventoryUI()
-    {
-    	if (inventoryPanel != null)
-    	{
-	    	inventoryPanel.gameObject.SetActive(!inventoryPanel.gameObject.activeSelf);
+	{
+		if (inventoryPanel != null)
+		{
+			inventoryPanel.gameObject.SetActive(!inventoryPanel.gameObject.activeSelf);
 			Item activeItem = SimulationController.Instance.player.inventory.GetActiveItem();
 			if (activeItem != null) {
 				SetItemDetails(activeItem);
 			}
-    	}
-    }
+		}
+	}
 
 	public void SetItemDetails(Item item)	
 	{

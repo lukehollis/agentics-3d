@@ -6,6 +6,7 @@ using UnityEngine.UI;
 using UnityEditor;
 using UnityEngine.SceneManagement;
 using CbAutorenTool.Tools; // For CHugeDateTime
+using TMPro;
 
 [System.Serializable]
 public struct HistoricalEvent
@@ -19,38 +20,16 @@ public struct HistoricalEvent
 
 public class Timeline : MonoBehaviour
 {
-    public string place;
-
-    // egypt
-    // public CHugeDateTime currentDate = new CHugeDateTime(-1394, 10, 4, 9, 0, 0);
-
-    // greece
-    // public CHugeDateTime currentDate = new CHugeDateTime(-229, 7, 21, 9, 0, 0);
-
-    // rome 
-    // public CHugeDateTime currentDate = new CHugeDateTime(-44, 6, 19, 9, 0, 0);
-
-    // maya
-    // public CHugeDateTime currentDate = new CHugeDateTime(628, 4, 14, 9, 0, 0);
-
-    // hackathon 
-    // public CHugeDateTime currentDate = new CHugeDateTime(2024, 9, 7, 11, 0, 0);
-
-    // darwin
-    // public CHugeDateTime currentDate = new CHugeDateTime(1835, 9, 16, 9, 0, 0);
-
     public CHugeDateTime currentDate;
 
-    public float latitude = 36.8912578f;
-    public float longitude = 27.2533406f;
+    [Header("Simulation Settings")]
+    public string place;
+    public float gameDayDuration = 600f; // 10 mins represents 24 hours in-game
 
+    [Header("UI")]
+    public TMP_Text dateText;
 
     private float timeSinceLastUpdate = 0f;
-    public float gameDayDuration = 600f; // 10 mins represents 24 hours in-game
-    
-
-    public Text dateText;
-
     private float originalTimeScale = 1f;
     private bool isFastForwarding = false;
 
@@ -86,44 +65,17 @@ public class Timeline : MonoBehaviour
 
         switch (sceneName)
         {
-            case "FarmKheti":
-                currentDate = new CHugeDateTime(-1394, 10, 4, 9, 0, 0);
-                break;
-            case "FarmLycidas":
-                currentDate = new CHugeDateTime(-229, 7, 21, 9, 0, 0);
-                break;
-            case "FarmAurelia":
-                currentDate = new CHugeDateTime(-44, 6, 19, 9, 0, 0);
-                break;
-            case "FarmHunahpuXbalanque":
-                currentDate = new CHugeDateTime(628, 4, 14, 9, 0, 0);
-                break;
-            case "RomeCity":
-                currentDate = new CHugeDateTime(-44, 6, 19, 9, 0, 0);
-                break;
-            case "DarwinIsland":
-                currentDate = new CHugeDateTime(1835, 9, 16, 9, 0, 0);
-                break;
-            case "blank_starter":
+            case "dev":
                 currentDate = new CHugeDateTime(now.Year, now.Month, now.Day, 11, now.Minute, now.Second);
                 break;
-            case "tree_game":
-                currentDate = new CHugeDateTime(-44, now.Month, now.Day, now.Hour, now.Minute, now.Second);
-                break;
-            case "hackathon":
-                currentDate = new CHugeDateTime(now.Year, now.Month, now.Day, 11, 0, now.Second);
+            case "BART":
+                currentDate = new CHugeDateTime(2024, 12, 11, 11, 0, 0);
                 break;
             default:
                 currentDate = new CHugeDateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second);
-                // Debug.Log("Scene name not recognized. Date is current time.");
                 break;
         }
 
-        // if sceneName starts with "rome_" then set currentDate to the date of the first event in the rome_events list
-        if (sceneName.StartsWith("rome_"))
-        {
-            currentDate = new CHugeDateTime(-44, 6, 19, 9, 0, 0);
-        }
     }
 
     void Update()
@@ -156,18 +108,6 @@ public class Timeline : MonoBehaviour
         // CheckForEvents();
         dateText.text = GetFormattedDateTime();
     }
-
-    // void CheckForEvents()
-    // {
-    //     foreach (var historicalEvent in events)
-    //     {
-    //         if (currentDate.Equals(historicalEvent.date)) // Assumes CHugeDateTime supports Equals with time comparison
-    //         {
-    //             historicalEvent.eventAction?.Invoke();
-    //             Debug.Log($"Historical Event: {historicalEvent.name} - {historicalEvent.description}");
-    //         }
-    //     }
-    // }
 
     public string GetFormattedDate()
     {
@@ -220,24 +160,6 @@ public class Timeline : MonoBehaviour
             return string.Empty;
         }
     }
-#if UNITY_EDITOR
-    // private CHugeDateTime CHugeDateTimeField(string label, CHugeDateTime dateTime)
-    // {
-    //     // EditorGUILayout.BeginHorizontal();
-    //     // EditorGUILayout.LabelField(label, GUILayout.Width(40));
-
-    //     // long year = EditorGUILayout.LongField(dateTime.Year, GUILayout.Width(60));
-    //     // int month = EditorGUILayout.IntField(dateTime.Month, GUILayout.Width(30));
-    //     // int day = EditorGUILayout.IntField(dateTime.Day, GUILayout.Width(30));
-    //     // int hour = EditorGUILayout.IntField(dateTime.Hour, GUILayout.Width(30));
-    //     // int minute = EditorGUILayout.IntField(dateTime.Minute, GUILayout.Width(30));
-
-    //     // EditorGUILayout.EndHorizontal();
-
-    //     // // Create a new CHugeDateTime instance with the modified values
-    //     // return new CHugeDateTime(year, month, day, hour, minute, 0);
-    // }
-#endif
 
    public void StartFastForwarding()
     {
