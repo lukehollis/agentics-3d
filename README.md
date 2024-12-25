@@ -11,6 +11,9 @@ This is currently running the [Civilization Simulations](https://mused.com/explo
 
 Now the package is also functional in 3D, used in the BART Digital Twin simulation project. [link soon](#)
 
+![roman_farm_simulator_neural_state_800w](https://github.com/user-attachments/assets/bd9e2a5e-8593-4f58-bbcc-a33e8d300aed)
+Individual characters can be controlled by policy and run inference on shader graph, then visualize their inner state in game.
+
 ## Overview
 
 I'm currently developing this to build digital twins of real world systems, modern and historical, but it can be used for training Generalist Agents for simulations for other purposes. 
