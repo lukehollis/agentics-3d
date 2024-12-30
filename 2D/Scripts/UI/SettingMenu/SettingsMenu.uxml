@@ -1,0 +1,22 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/Common/UI/SettingMenu/SettingMenu.uss?fileID=7433441132597879392&amp;guid=50080f77971bd1b45b184c84d41409c1&amp;type=3#SettingMenu" />
+    <ui:VisualElement name="SettingMenu" style="overflow: visible; display: flex; visibility: hidden;">
+        <ui:VisualElement name="Background">
+            <ui:Label tabindex="-1" text="Settings" display-tooltip-when-elided="true" name="Title" />
+            <ui:Button text="X" display-tooltip-when-elided="true" name="CloseButton" />
+            <ui:VisualElement name="Content" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0);">
+                <ui:VisualElement name="Line" class="space-line" style="background-color: rgba(0, 0, 0, 0);" />
+                <ui:DropdownField label="Resolution" index="-1" choices="System.Collections.Generic.List`1[System.String]" name="ResolutionDropdown" />
+                <ui:Toggle label="Fullscreen" name="FullscreenToggle" />
+                <ui:VisualElement name="Line" class="space-line" style="background-color: rgba(0, 0, 0, 0);" />
+                <ui:Slider picking-mode="Ignore" label="Main Volume" value="1" high-value="1" name="MainVolume" />
+                <ui:Slider picking-mode="Ignore" label="Music Volume" value="1" high-value="1" name="MusicVolume" />
+                <ui:Slider picking-mode="Ignore" label="SFX Volume" value="1" high-value="1" name="SFXVolume" />
+            </ui:VisualElement>
+            <ui:VisualElement name="BottomPart" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0);">
+                <ui:Button text="Quit Game" display-tooltip-when-elided="true" name="QuitButton" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+    <ui:Button text="Menu" display-tooltip-when-elided="true" name="OpenSettingMenuButton" style="position: absolute; right: 20px; top: 25px; border-left-color: rgb(0, 127, 226); border-right-color: rgb(0, 127, 226); border-top-color: rgb(0, 127, 226); border-bottom-color: rgb(0, 127, 226); border-left-width: 0; border-right-width: 0; border-top-width: 0; border-bottom-width: 0; border-top-left-radius: 41px; border-bottom-left-radius: 41px; border-top-right-radius: 41px; border-bottom-right-radius: 41px; color: rgb(255, 255, 255); font-size: 48px; width: 154px; height: 89px; margin-left: 0; margin-right: 0; margin-top: 0; margin-bottom: 0; padding-left: 0; padding-right: 0; padding-top: 0; padding-bottom: 12px; -unity-font-style: bold; background-color: rgba(0, 127, 226, 0); background-image: url(&apos;project://database/Assets/Art/UI/Sprite_Button_Blue.png?fileID=21300000&amp;guid=f4ed70e9a197ed14cbaaba89ea27dd68&amp;type=3#Sprite_Button_Blue&apos;); justify-content: flex-start; text-shadow: 0 60.9px 0.7px rgb(26, 94, 221);" />
+</ui:UXML>

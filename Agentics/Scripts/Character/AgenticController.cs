@@ -1,41 +1,29 @@
 using UnityEngine;
+using UnityEngine.AI;
 using System.Collections;
 using System.Collections.Generic;
+using Agentics;
+using Polyperfect.Common;
 
 namespace Agentics
 {
-    public abstract class AgenticController : MonoBehaviour, Interactable
+    [RequireComponent(typeof(AgenticCharacter))]
+    [RequireComponent(typeof(CharacterController))]
+    [RequireComponent(typeof(TransportationController))]
+    public class AgenticController : MonoBehaviour, Interactable
     {
         [Header("Core References")]
         public AgenticCharacter character;
+        public CharacterController characterController;
+        public Animator animator;
+        public GameObject characterInfoPanel;
+        private TransportationController transportationController;
         
         [Header("Movement Settings")]
-        public float baseWalkSpeed = 2f;
-        public float baseRunSpeed = 4f;
-        private float speedMultiplier = 1f;
-
-        public float walkSpeed 
-        {
-            get { return baseWalkSpeed * speedMultiplier; }
-            set { baseWalkSpeed = value; }
-        }
-
-        public float runSpeed
-        {
-            get { return baseRunSpeed * speedMultiplier; }
-            set { baseRunSpeed = value; }
-        }
-
-        public float SpeedMultiplier
-        {
-            get { return speedMultiplier; }
-            set { speedMultiplier = Mathf.Clamp(value, 0.1f, 2f); }
-        }
-
-        public float stoppingDistance = 0.1f;
         public float interactionRadius = 2f;
         public LayerMask interactableLayers;
-        public string sleepWakeMode = "wake";
+        public float SpeedMultiplier = 1f;
+        public Vector3 targetPos;
 
         [Header("Planning")]
         public DayPlan currentDayPlan;
@@ -47,94 +35,501 @@ namespace Agentics
         public string initialDayPlanJson;
         [TextArea(minLines: 5, maxLines: 20)]
         public string initialActionTasksJson;
+        [TextArea(minLines: 5, maxLines: 20)]
+        public string initialDialogOpener;
 
-        public bool isMoving = false;
-        public bool isInteracting = false;
-        public bool isInDialog = false;
+        public string sleepWakeMode = "wake";
         public Vector3? interruptedDestination;
+        public string interruptedTaskEmoji;
         public bool wasNavigating;
-        public float taskDuration = 30f;
+        private float turnSpeed = 120f;
 
-        protected Animator animator;
-        protected readonly int speedHash = Animator.StringToHash("Speed");
-        protected readonly int motionSpeedHash = Animator.StringToHash("MotionSpeed");
-        protected readonly int groundedHash = Animator.StringToHash("Grounded");
+        private Coroutine currentActionCoroutine;
+        private IEnumerator currentActionCoroutineState;
 
-        public float moveSpeed
+        [Header("Animation States")]
+        public IdleState[] idleStates;
+        public MovementState[] movementStates;
+
+        private HashSet<string> animatorParameters = new HashSet<string>();
+
+
+        // Add near other state flags
+        private CharacterState currentState = CharacterState.Idle;
+        public CharacterState State => currentState;
+
+        public enum CharacterState
         {
-            get { return currentMoveType == MoveType.Running ? runSpeed : walkSpeed; }
+            Idle,
+            Moving,
+            ExecutingTask,
+            InDialog
         }
-
-        protected MoveType currentMoveType = MoveType.Idle;
 
         protected virtual void Awake()
         {
-            animator = GetComponent<Animator>();
-            SetupComponents();
-        }
+            character = GetComponent<AgenticCharacter>();
+            characterController = GetComponent<CharacterController>();
+            transportationController = GetComponent<TransportationController>();
 
-        protected abstract void SetupComponents();
-        
-        protected virtual void Start()
-        {
-            if (!string.IsNullOrEmpty(initialDayPlanJson))
-            {
-                UpdatePlan(initialDayPlanJson);
-            }
-            else
-            {
-                CreateDefaultPlan();
-            }
+            // initial state is idle
+            SetState(CharacterState.Idle);
+
+            // character must always have initial plan
+            UpdatePlan(initialDayPlanJson);
         }
 
         protected virtual void Update()
         {
-            CheckMovement();
-            
-            if (currentDayPlanAction != null && !isMoving && !isInteracting)
+            // Only check movement and start new actions if not in dialog
+            if (currentState != CharacterState.InDialog)
             {
-                StartCoroutine(ExecuteCurrentAction());
+                
+                if (
+                    currentState == CharacterState.Idle 
+                    && currentDayPlanAction != null 
+                    && currentActionCoroutine == null
+                )
+                {
+                    currentActionCoroutine = StartCoroutine(ExecuteCurrentAction());
+                }
             }
         }
 
-        protected abstract void CheckMovement();
-        public abstract void SetDestination(Vector3 position);
-        public abstract void Interact();
-        protected abstract IEnumerator ExecuteCurrentAction();
-        public abstract void UpdatePlan(string planJson);
-        
-        protected virtual void CreateDefaultPlan()
+        protected virtual void RequestPlan()
         {
-            var testPlan = new DayPlan
+            if (SimulationController.Instance.isOfflineMode)    
             {
-                day_overview = "Test Day",
-                actions = new List<DayPlanAction>
+                OnPlanRequestComplete(true, initialDayPlanJson);
+            }
+            else
+            {
+                NetworkingController.Instance.RequestAgenticPlan(character.ID, OnPlanRequestComplete);
+            }
+        }
+
+        protected virtual void OnPlanRequestComplete(bool success, string planJson)
+        {
+            if (success && !string.IsNullOrEmpty(planJson))
+            {
+                UpdatePlan(planJson);
+            }
+            else
+            {
+                // Restart the existing plan from the beginning
+                if (currentDayPlan != null && currentDayPlan.actions != null && currentDayPlan.actions.Count > 0)
                 {
-                    new DayPlanAction
+                    currentDayPlanAction = currentDayPlan.actions[0];
+                }
+            }
+        }
+
+        protected virtual IEnumerator ExecuteCurrentAction()
+        {
+            if (currentDayPlanAction == null)
+            {
+                currentActionCoroutine = null;
+                yield break;
+            }
+
+            Vector3 targetPosition = TaskWaypoints.Instance.GetWaypointLocation(currentDayPlanAction.location);
+            float taskRadius = 10f;
+
+            if (targetPosition != Vector3.zero)
+            {
+                // Start walking animation before movement
+                if (animator != null)
+                {
+                    animator.SetBool("isWalking", true);
+                    animator.SetBool("isRunning", false);
+                }
+
+                SetState(CharacterState.Moving);
+
+                Debug.Log("Character: " + character.CharacterName + " Traveling to destination: " + currentDayPlanAction.location + " " + targetPosition);
+
+                // // Use the transportation controller to handle the journey
+                yield return StartCoroutine(
+                    transportationController.TravelToDestination(
+                        currentDayPlanAction.location, 
+                        targetPosition
+                    )
+                );
+
+                // Once we've arrived, continue with task execution
+                SetState(CharacterState.Idle);
+                if (animator != null)
+                {
+                    animator.SetBool("isWalking", false);
+                    animator.SetBool("isRunning", false);
+                }
+
+                // Execute tasks at location
+                if (currentActionTasks != null && currentActionTasks.tasks != null)
+                {
+                    foreach (var task in currentActionTasks.tasks)
                     {
-                        action = "Walk to market",
-                        emoji = "🚶",
-                        location = "market"
+                        yield return StartCoroutine(ExecuteTask(task));
                     }
                 }
-            };
-            
-            UpdatePlan(JsonUtility.ToJson(testPlan));
+
+                // Check if this was the last action in the plan
+                if (currentDayPlan != null && 
+                    currentDayPlan.actions != null && 
+                    currentDayPlan.actions.IndexOf(currentDayPlanAction) == currentDayPlan.actions.Count - 1)
+                {
+                    RequestPlan();
+                }
+                else
+                {
+                    // Move to next action in the plan
+                    int currentIndex = currentDayPlan.actions.IndexOf(currentDayPlanAction);
+                    currentDayPlanAction = currentDayPlan.actions[currentIndex + 1];
+                }
+            }
+
+            currentActionCoroutine = null;
         }
+
+        protected virtual IEnumerator ExecuteTask(ActionTask task)
+        {
+            SetState(CharacterState.ExecutingTask);
+            
+            // Show task indicator with emoji
+            var tmpText = taskIndicator.GetComponentInChildren<TMPro.TMP_Text>();
+            taskIndicator.SetActive(true);
+            tmpText.text = task.emoji;
+
+            // generate a random duration for the task
+            float taskDuration = Random.Range(30f, 90f);
+            float elapsedTime = 0f;
+
+            // Animator uses: 0=Right, 1=Left, 2=Up, 3=Down
+            int[] directionValues = { 0, 2, 1, 3 }; // Right, Up, Left, Down
+            int currentDirectionIndex = 0;
+
+            while (elapsedTime < taskDuration)
+            {
+                // Check if we're in dialog - if so, pause the task execution
+                if (currentState == CharacterState.InDialog)
+                {
+                    taskIndicator.SetActive(false);
+                    yield return new WaitUntil(() => currentState != CharacterState.InDialog);
+                    taskIndicator.SetActive(true);
+                }
+
+                float waitTime = Random.Range(1f, 3f);
+                yield return new WaitForSeconds(waitTime);
+                elapsedTime += waitTime;  // Add the actual wait time
+
+                // Only update animations if not in dialog
+                if (currentState != CharacterState.InDialog)
+                {
+                    // Get the current direction value for the animator
+                    int currentDirection = directionValues[Random.Range(0, directionValues.Length)];
+                    
+                    // Update direction index
+                    currentDirectionIndex = (currentDirectionIndex + 1) % directionValues.Length;
+                }
+            }
+
+            // Return to idle
+            SetState(CharacterState.Idle);
+            taskIndicator.SetActive(false);
+        }
+
+        public virtual void UpdatePlan(string planJson)
+        {
+            if (string.IsNullOrEmpty(planJson)) return;
+
+            // Parse the JSON into DayPlan
+            currentDayPlan = JsonUtility.FromJson<DayPlan>(planJson);
+            
+            if (currentDayPlan != null && currentDayPlan.actions != null && currentDayPlan.actions.Count > 0)
+            {
+                // Set the first action as current
+                currentDayPlanAction = currentDayPlan.actions[0];
+                
+                // Parse any tasks for this action
+                if (!string.IsNullOrEmpty(initialActionTasksJson))
+                {
+                    currentActionTasks = JsonUtility.FromJson<ActionTaskList>(initialActionTasksJson);
+                } else {
+                    currentActionTasks = new ActionTaskList();
+                    // Create a default task using the action's emoji
+                    if (currentDayPlanAction != null && !string.IsNullOrEmpty(currentDayPlanAction.emoji))
+                    {
+                        currentActionTasks.tasks = new List<ActionTask> 
+                        { 
+                            new ActionTask { emoji = currentDayPlanAction.emoji }
+                        };
+                    }
+                }
+
+            }
+        }
+
+        public virtual void Interact()
+        {
+            SetState(CharacterState.InDialog);
+
+            // Store current state if needed
+            if (characterController.enabled)
+            {
+                interruptedDestination = transform.position;
+                wasNavigating = true;
+            }
+            
+            if (characterController.enabled)
+            {
+                // Stop any current movement
+                characterController.enabled = false;
+            }
+            
+            // Find and face the player
+            var player = GameObject.FindGameObjectWithTag("Player");
+            if (player != null)
+            {
+                FaceTarget(player.transform.position);
+            }
+
+            // Create a new Dialog instance for the initial conversation
+            var initialDialog = new Dialog();
+            if (!string.IsNullOrEmpty(initialDialogOpener))
+            {
+                initialDialog.Lines = new List<string> { initialDialogOpener };
+            }
+            else
+            {
+                initialDialog.Lines = new List<string>();
+            }
+
+            // Start the dialog with the initial opener
+            StartCoroutine(DialogManager.Instance.ShowDialog(
+                initialDialog,
+                character.ID,
+                character.CharacterName,
+                character.Avatar,
+                true
+            ));
+        }
+
+        protected virtual void FaceTarget(Vector3 targetPosition)
+        {
+            Vector2 direction = (targetPosition - transform.position).normalized;
+
+            // Determine facing direction (using animator values: 0=Right, 1=Left, 2=Up, 3=Down)
+            int faceDirection;
+            if (Mathf.Abs(direction.x) > Mathf.Abs(direction.y))
+            {
+                faceDirection = direction.x > 0 ? 0 : 1; // Right = 0, Left = 1
+            }
+            else
+            {
+                faceDirection = direction.y > 0 ? 2 : 3; // Up = 2, Down = 3
+            }
+        }
+
+        private IdleState GetRandomIdleState()
+        {
+            if (idleStates == null || idleStates.Length == 0)
+                return null;
+
+            int totalWeight = 0;
+            foreach (var state in idleStates)
+                totalWeight += state.stateWeight;
+
+            int randomWeight = Random.Range(0, totalWeight);
+            int currentWeight = 0;
+
+            foreach (var state in idleStates)
+            {
+                currentWeight += state.stateWeight;
+                if (randomWeight <= currentWeight)
+                    return state;
+            }
+
+            return idleStates[0];
+        }
+
+        void FaceDirection(Vector3 facePosition)
+        {
+            transform.rotation = Quaternion.LookRotation(Vector3.ProjectOnPlane(Vector3.RotateTowards(transform.forward,
+                facePosition, turnSpeed * Time.deltaTime*Mathf.Deg2Rad, 0f), Vector3.up), Vector3.up);
+        }
+
+        public virtual void SetDestination(Vector3 position)
+        {
+            Debug.Log("Setting destination: " + position);
+            targetPos = position;
+            // Set state to Moving
+            SetState(CharacterState.Moving);
+
+            // Calculate direction vector
+            Vector3 direction = (position - transform.position).normalized;
+            
+            // Use SimpleMove with direction and speed
+            characterController.SimpleMove(direction * moveSpeed * SpeedMultiplier);
+            
+            // Face the movement direction
+            FaceDirection(direction);
+        }
+
 
         public virtual void SetDialogState(bool inDialog)
         {
-            isInDialog = inDialog;
-            
-            // Stop movement when entering dialog
             if (inDialog)
             {
-                isMoving = false;
-                if (animator != null)
+                if (characterController.enabled)
                 {
-                    animator.SetFloat("Speed", 0f);
+                    interruptedDestination = transform.position;
+                    wasNavigating = true;
+                }
+                
+                // Stop any movement
+                if (characterController.enabled)
+                {
+                    characterController.enabled = false;
+                }
+
+                SetState(CharacterState.InDialog);
+            }
+            else
+            {
+                characterController.enabled = true;
+                
+                if (wasNavigating && interruptedDestination.HasValue)
+                {
+                    // Resume navigation to interrupted destination
+                    SetState(CharacterState.Moving);
+                    SetDestination(interruptedDestination.Value);
+                    wasNavigating = false;
+                    interruptedDestination = null;
+                }
+                else
+                {
+                    SetState(CharacterState.Idle);
                 }
             }
         }
+
+        protected virtual void OnDrawGizmosSelected()
+        {
+            // Draw interaction radius
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawWireSphere(transform.position, interactionRadius);
+
+            // Draw navigation line and destination point when moving
+            if (currentState == CharacterState.Moving)
+            {
+                // Draw destination sphere
+
+                // Draw line from character to destination
+                Gizmos.DrawLine(transform.position, targetPos);
+            }
+        }
+
+        public virtual IEnumerator SetDestinationCoroutine(Vector3 position)
+        {
+            Debug.Log("Setting destination for SetDestinationCoroutine: " + position);
+            targetPos = position;
+            float moveSpeed = 5f;
+            float rotationSpeed = 2f;
+            float stoppingDistance = 2f;
+
+            SetState(CharacterState.Moving);
+            
+            while (Vector3.Distance(transform.position, position) > stoppingDistance)
+            {
+                float currentDistance = Vector3.Distance(transform.position, position);
+                
+                Vector3 direction = (position - transform.position).normalized;
+                characterController.SimpleMove(direction * moveSpeed * SpeedMultiplier);
+                
+                // Face the movement direction
+                FaceDirection(direction);
+                
+                yield return null;
+            }
+
+            Debug.Log("Reached destination: " + position);
+            SetState(CharacterState.Idle);
+        }
+
+        private void SetState(CharacterState newState)
+        {
+            if (currentState == newState) return;
+            
+            // Exit current state
+            switch (currentState)
+            {
+                case CharacterState.Moving:
+                    if (animator != null)
+                    {
+                        animator.SetBool("isWalking", false);
+                        animator.SetBool("isRunning", false);
+                    }
+                    break;
+                case CharacterState.ExecutingTask:
+                    taskIndicator.SetActive(false);
+                    break;
+                case CharacterState.InDialog:
+                    break;
+            }
+
+            currentState = newState;
+
+            // Enter new state
+            switch (newState)
+            {
+                case CharacterState.Idle:
+                    if (animator != null)
+                    {
+                        animator.SetBool("isWalking", false);
+                        animator.SetBool("isRunning", false);
+                    }
+                    break;
+                case CharacterState.Moving:
+                    if (animator != null)
+                    {
+                        animator.SetBool("isWalking", true);
+                        animator.SetBool("isRunning", false);
+                    }
+                    break;
+                case CharacterState.ExecutingTask:
+                    taskIndicator.SetActive(true);
+                    break;
+                case CharacterState.InDialog:
+                    if (animator != null)
+                    {
+                        animator.SetBool("isWalking", false);
+                        animator.SetBool("isRunning", false);
+                    }
+                    break;
+            }
+        }
+
+        // Also add cleanup in OnDestroy
+        protected virtual void OnDestroy()
+        {
+            // Unregister when the object is destroyed
+            if (character != null)
+            {
+                NetworkingController.Instance.UnregisterAgenticController(character.ID);
+            }
+        }
+
+        public virtual void ShowCharacterInfoPanel()
+        {
+            characterInfoPanel.SetActive(true);
+        }
+
+        public virtual void HideCharacterInfoPanel()
+        {
+            characterInfoPanel.SetActive(false);
+        }
+
+        private float moveSpeed = 2f; // Add this field to control movement speed
     }
+
 }

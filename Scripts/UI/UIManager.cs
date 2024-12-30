@@ -42,10 +42,6 @@ public class UIManager : MonoBehaviour
 
 	void Update()
 	{
-		if (keyboard.tabKey.wasPressedThisFrame || keyboard.bKey.wasPressedThisFrame)
-			ToggleInventoryUI();
-			
-		dragStack = keyboard.leftShiftKey.isPressed;
 	}
 
 	public void ToggleInventoryUI()

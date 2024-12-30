@@ -1,7 +1,7 @@
 # Unity Agentics - RL-Agents Based Character AI System
 
 
-This project is a work-in-progress implementing world model training for Unity environments using the ML-Agents to OpenAI Gym wrapper to build realistic human simulations. The goal is to train reinforcement learning agents efficiently by having them learn in a world model rather than directly in the environment so that they have a persistent inner state, and then use their policy to make decisions in the environment.
+This project is a work-in-progress implementing generalist agent training for Unity environments using the ML-Agents package to build realistic simulations. The goal is to be able to more easily have agents available for simulations for a wide range of purposes, especially in urban and transportation simulations.
 
 ![Rome Simulator](https://iiif.mused.com/rome_simulator_mused.jpg/0,240,2048,854/990,/0/default.jpg)
 
@@ -10,18 +10,6 @@ This is currently running the [Civilization Simulations](https://mused.com/explo
 ![BART Digital Twin](https://iiif.mused.com/digital_twin_bart.jpg/0,240,2048,854/990,/0/default.jpg)
 
 Now the package is also functional in 3D, used in the BART Digital Twin simulation project. [link soon](#)
-
-## Overview
-
-I'm currently developing this to build digital twins of real world systems, modern and historical, but it can be used for training Generalist Agents for simulations for other purposes. 
-
-The project implements three key components based on modern world model approaches:
-
-1. **Data Collection**: Gather experience from Unity environments using ML-Agents Gym wrapper
-2. **World Model Training**: Learn to predict next observations and rewards
-3. **Policy Training**: Train RL agents inside the learned world model
-
-Then the policy can be used in a Unity environment for controlling NPC behavior or other purposes.
 
 
 ## Getting Started
@@ -63,8 +51,9 @@ This will automatically:
 
 ## Getting Started
 0. Add the Agentics package to your Unity project
-1. Add the Brain component to your character
-2. Configure required components (Sensor, Plan, Motivation, etc.)
+0.a -- if working in 2D, you may get further with the 2D specific version 
+1. Add the `AgenticController` component to your character, and configure with CharacterController, NavMeshAgent, and any other components you need
+2. Set an initial day plan and waypoints for the agent
 3. Set up training configuration with the python directory in the root of this repo
 4. Add example plans in Data directory and configure with NetworkingController [coming soon]
 
@@ -117,4 +106,16 @@ series = {UIST '23}
   year={2023}
 }   
 ```
+
+```
+@article{sima2024,
+    title={SIMA: A Generalist AI Agent for 3D Virtual Environments},
+    author={SIMA Team},
+    journal={Google DeepMind Blog},
+    year={2024},
+    month={March},
+    url={https://deepmind.google/discover/blog/sima-generalist-ai-agent-for-3d-virtual-environments/}
+}
+```
+
 

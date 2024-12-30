@@ -55,6 +55,8 @@ public class Timeline : MonoBehaviour
 
     void Start()
     {
+        currentDate = new CHugeDateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 
+            DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
         SetDateBasedOnScene();
     }
 

@@ -1,0 +1,38 @@
+{
+    "day_overview": "Take care of my farm and spend time with my family",
+    "actions": [
+        {
+            "action": "Harvest olives",
+            "emoji": "🫒",
+            "location": "Olive Orchard",
+            "duration": 180,
+            "subtasks": [
+                {
+                    "task": "Check olive ripeness",
+                    "emoji": "👀",
+                    "sub_location": "NORTH",
+                    "animation": "idle" 
+                },
+                {
+                    "task": "Collect ripe olives",
+                    "emoji": "🧺",
+                    "sub_location": "CENTER",
+                    "animation": "hacking"
+                }
+            ]
+        },
+        {
+            "action": "Ask Simichidas how his day is going",
+            "emoji": "💬",
+            "location": "Simichidas",
+            "duration": 60,
+            "subtasks": [
+                {
+                    "task": "Start conversation",
+                    "emoji": "💭",
+                    "animation": "idle"
+                }
+            ]
+        }
+    ]
+}

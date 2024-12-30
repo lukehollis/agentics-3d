@@ -13,13 +13,13 @@ public class NetworkingController : MonoBehaviour
 {
     private WebSocket websocket;
     // keep available for local testing
-    private readonly string websocketUrl = "ws://civs.local:8000/ws/characters/";
-    // private readonly string websocketUrl = "wss://civs.mused.com/ws/characters/";
+    // private readonly string websocketUrl = "ws://civs.local:8000/ws/characters/";
+    private readonly string websocketUrl = "wss://civs.mused.com/ws/characters/";
     public event Action OnWebSocketConnected;
 
     private Dictionary<int, AgenticController> characterControllers = new Dictionary<int, AgenticController>();
     private string user_uuid;
-    private string game_session_uuid; // Add this line
+    private string game_session_uuid;
 
     private static NetworkingController instance;
     public static NetworkingController Instance
@@ -46,6 +46,17 @@ public class NetworkingController : MonoBehaviour
 
     // Add this dictionary to store self-reflection callbacks
     private Dictionary<int, Action<bool>> selfReflectionCallbacks = new Dictionary<int, Action<bool>>();
+
+    // Add this dictionary to store plan request callbacks
+    private Dictionary<int, Action<bool, string>> planRequestCallbacks = new Dictionary<int, Action<bool, string>>();
+
+    // Add this dictionary to store load game response callbacks
+    private Dictionary<int, Action<string>> loadGameResponseCallbacks = new Dictionary<int, Action<string>>();
+
+    private float reconnectInterval = 5f; // Try to reconnect every 5 seconds
+    private bool shouldReconnect = true;
+    private bool isInitializing = false; // Add this flag
+    private bool hasInitialized = false; // Add this flag
 
     private async void Start()
     {
@@ -75,57 +86,138 @@ public class NetworkingController : MonoBehaviour
 
     private async Task InitializeWebSocket()
     {
-        game_session_uuid = Guid.NewGuid().ToString();
-
-        websocket = new WebSocket(websocketUrl);
-
-        websocket.OnOpen += () =>
+        if (isInitializing)
         {
-            Debug.Log("WebSocket connection opened");
-            OnWebSocketConnected?.Invoke();
-        };
+            Debug.Log("Already initializing WebSocket - skipping");
+            return;
+        }
+        
+        isInitializing = true;
+        hasInitialized = false;  // Reset this flag during initialization
 
-        websocket.OnError += (e) =>
+        try 
         {
-            Debug.Log("WebSocket error: " + e);
-        };
+            if (websocket != null)
+            {
+                Debug.Log("Cleaning up existing WebSocket connection");
+                await websocket.Close();
+                websocket = null;
+            }
 
-        websocket.OnClose += (e) =>
+            game_session_uuid = Guid.NewGuid().ToString();
+            Debug.Log($"Creating new WebSocket connection to {websocketUrl}");
+            websocket = new WebSocket(websocketUrl);
+
+            websocket.OnOpen += () =>
+            {
+                Debug.Log("WebSocket connection opened successfully");
+                hasInitialized = true;
+                isInitializing = false;
+                shouldReconnect = true;  // Reset reconnect flag
+                OnWebSocketConnected?.Invoke();
+            };
+
+            websocket.OnError += (e) =>
+            {
+                Debug.LogError($"WebSocket error: {e}");
+                hasInitialized = false;
+                SimulationController.Instance.SetOfflineMode(true);
+
+                if (!SimulationController.Instance.hasStarted)
+                {
+                    // var startScreen = FindObjectOfType<StartScreenController>();
+                    // if (startScreen != null)
+                    // {
+                    //     startScreen.ShowOfflineMessage();
+                    // }
+                    SimulationController.Instance.HandleGameLoaded();
+                }
+                shouldReconnect = true;
+            };
+
+            websocket.OnClose += (e) =>
+            {
+                Debug.Log("WebSocket connection closed");
+                hasInitialized = false;
+                shouldReconnect = true;
+            };
+
+            websocket.OnMessage += (bytes) =>
+            {
+                var message = System.Text.Encoding.UTF8.GetString(bytes);
+                OnMessageReceived(bytes);
+            };
+
+            // InvokeRepeating("SendWebSocketMessage", 0.0f, 0.3f);
+
+            Debug.Log("Attempting to connect WebSocket...");
+            await websocket.Connect();
+        }
+        catch (Exception ex)
         {
-            Debug.Log("WebSocket connection closed");
-        };
-
-        websocket.OnMessage += (bytes) =>
+            Debug.LogError($"Error during WebSocket initialization: {ex.Message}");
+            hasInitialized = false;
+            shouldReconnect = true;
+        }
+        finally 
         {
-            var message = System.Text.Encoding.UTF8.GetString(bytes);
-            OnMessageReceived(bytes);
-        };
-
-        // InvokeRepeating("SendWebSocketMessage", 0.0f, 0.3f);
-
-        await websocket.Connect();
+            if (!hasInitialized)
+            {
+                isInitializing = false;  // Reset initialization flag if we failed
+            }
+        }
     }
 
     void Update()
     {
         #if !UNITY_WEBGL || UNITY_EDITOR
-            if (websocket != null && websocket.State == WebSocketState.Open)
+            if (websocket != null)
             {
-                websocket.DispatchMessageQueue();
+                if (websocket.State == WebSocketState.Open)
+                {
+                    websocket.DispatchMessageQueue();
+                }
+                else if (shouldReconnect && websocket.State == WebSocketState.Closed)
+                {
+                    Debug.Log("WebSocket closed, attempting to reconnect...");
+                    StartCoroutine(ReconnectWebSocket());
+                }
             }
         #endif
+
+        if (websocket == null)
+        {
+            Debug.Log($"[{Time.time}] WebSocket is null in Update()");
+        }
+        else
+        {
+            // Debug.Log($"[{Time.time}] WebSocket state: {websocket.State}");
+        }
     }
 
-    async void SendWebSocketMessage()
+    private IEnumerator ReconnectWebSocket()
     {
-    if (websocket.State == WebSocketState.Open)
-    {
-      // Sending bytes
-      await websocket.Send(new byte[] { 10, 20, 30 });
-
-      // Sending plain text
-      await websocket.SendText("plain text message");
-    }
+        if (isInitializing) yield break; // Don't attempt reconnect if already initializing
+        
+        shouldReconnect = false;  // Prevent multiple reconnection attempts
+        yield return new WaitForSeconds(reconnectInterval);
+        
+        Debug.Log("Attempting to reconnect WebSocket...");
+        yield return new WaitForSeconds(0);
+        
+        // Convert the async call to a coroutine-friendly version
+        var initTask = InitializeWebSocket();
+        while (!initTask.IsCompleted)
+        {
+            yield return null;
+        }
+        
+        if (initTask.Exception != null)
+        {
+            Debug.LogError($"Error during reconnection: {initTask.Exception.Message}");
+        }
+        
+        shouldReconnect = true;
     }
 
     private async void SendWebSocketMessage(string jsonString)
@@ -154,13 +246,35 @@ public class NetworkingController : MonoBehaviour
     private void OnMessageReceived(byte[] bytes)
     {
         var message = System.Text.Encoding.UTF8.GetString(bytes);
+        Debug.Log("Raw message received: " + message);
+
         try
         {
-            var receivedData = JsonUtility.FromJson<ReceivedMessageData>(message);
-            var messageType = receivedData.type;
-            var characterId = receivedData.character_id;
-            Debug.Log("Received message type: " + messageType + " for character ID: " + characterId);
+            if (string.IsNullOrEmpty(message))
+            {
+                Debug.LogError("Received empty message");
+                return;
+            }
 
+            if (!message.Contains("type"))
+            {
+                Debug.LogError("Message missing type field. Message: " + message);
+                return;
+            }
+
+            var receivedData = JsonUtility.FromJson<ReceivedMessageData>(message);
+            
+            if (receivedData == null)
+            {
+                Debug.LogError("Failed to parse message into ReceivedMessageData. Message: " + message);
+                return;
+            }
+
+            var messageType = receivedData.type;
+            Debug.Log("Received message type: " + messageType);
+
+            var characterId = receivedData.character_id;
+            
             if (messageType == "action_tasks_response")
             {
                 Debug.Log("Received action tasks response: " + receivedData.message);
@@ -177,8 +291,14 @@ public class NetworkingController : MonoBehaviour
             }
             else if (messageType == "plan_response")
             {
-                // Handle the streamed plan response
                 Debug.Log("Received plan response: " + receivedData.message);
+
+                // Call the callback if it exists
+                if (planRequestCallbacks.TryGetValue(characterId, out var callback))
+                {
+                    callback(true, receivedData.message);
+                    planRequestCallbacks.Remove(characterId);
+                }
 
                 // Update the character's plan in the game
                 if (characterControllers.ContainsKey(characterId))
@@ -189,6 +309,15 @@ public class NetworkingController : MonoBehaviour
                 else
                 {
                     Debug.LogWarning($"No NPCController found for character ID: {characterId}");
+                }
+            }
+            else if (messageType == "plan_error")
+            {
+                Debug.LogError($"Plan request failed for character {characterId}: {receivedData.message}");
+                if (planRequestCallbacks.TryGetValue(characterId, out var callback))
+                {
+                    callback(false, null);
+                    planRequestCallbacks.Remove(characterId);
                 }
             }
             else if (messageType == "conversation_response")
@@ -255,10 +384,18 @@ public class NetworkingController : MonoBehaviour
                     Debug.LogError("Tile generation response is invalid.");
                 }
             }
+            else if (messageType == "load_game_response")
+            {
+                Debug.Log("Received saved game data");
+                // Parse as LoadGameResponseData instead of ReceivedMessageData
+                SimulationController.Instance.HandleGameLoaded();
+            }
         }
         catch (Exception ex)
         {
-            Debug.LogError("Error deserializing WebSocket message: " + ex.Message);
+            Debug.LogError($"Error deserializing WebSocket message: {ex.Message}");
+            Debug.LogError($"Message content: {message}");
+            Debug.LogError($"Stack trace: {ex.StackTrace}");
         }
     }
 
@@ -305,18 +442,21 @@ public class NetworkingController : MonoBehaviour
         SendWebSocketMessage(jsonString);
     }
 
-    public void RegisterCharacterController(int characterId, AgenticController controller)
+    public void RegisterAgenticController(int characterId, AgenticController controller)
     {
         characterControllers[characterId] = controller;
     }
 
-    public void UnregisterCharacterController(int characterId)
+    public void UnregisterAgenticController(int characterId)
     {
         characterControllers.Remove(characterId);
     }
 
-    public void RequestCharacterPlan(int characterId)
+    public void RequestAgenticPlan(int characterId, Action<bool, string> callback)
     {
+        // Store the callback
+        planRequestCallbacks[characterId] = callback;
+
         string gameWorldDate = Timeline.Instance.GetFormattedDate();
         string gameWorldPlaceSetting = Timeline.Instance.place;
         List<string> waypointNames = TaskWaypoints.Instance.GetNames();
@@ -515,6 +655,64 @@ public class NetworkingController : MonoBehaviour
 
     private void OnApplicationQuit()
     {
-        websocket.Close();
+        if (websocket != null)
+        {
+            websocket.Close();
+        }
+    }
+
+    public bool IsWebSocketReady()
+    {
+        if (websocket == null)
+        {
+            Debug.LogWarning("WebSocket is null - attempting to reinitialize");
+            StartCoroutine(HandleNullWebSocket());
+            return false;
+        }
+        
+        var state = websocket.State;
+        Debug.Log($"Current WebSocket state: {state}");
+        
+        if (state != WebSocketState.Open)
+        {
+            Debug.LogWarning($"WebSocket not ready (State: {state})");
+            // Only trigger reconnect if we're closed and not already initializing
+            if (state == WebSocketState.Closed && !isInitializing)
+            {
+                shouldReconnect = true;
+                StartCoroutine(ReconnectWebSocket());
+            }
+            return false;
+        }
+        
+        return true;
+    }
+
+    private IEnumerator HandleNullWebSocket()
+    {
+        if (!isInitializing)
+        {
+            Debug.Log("Attempting to reinitialize null WebSocket connection");
+            var initTask = InitializeWebSocket();
+            while (!initTask.IsCompleted)
+            {
+                yield return null;
+            }
+            
+            if (initTask.Exception != null)
+            {
+                Debug.LogError($"Error during WebSocket reinitialization: {initTask.Exception.Message}");
+            }
+        }
+        else
+        {
+            Debug.Log("WebSocket initialization already in progress");
+        }
+    }
+
+    // Add this method to check connection status
+    public bool IsConnected()
+    {
+        return websocket != null && websocket.State == WebSocketState.Open;
     }
 }

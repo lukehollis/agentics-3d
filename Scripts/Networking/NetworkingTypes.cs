@@ -98,3 +98,4 @@ public class TileGenerationRequest
     public int character_id;
     public string tile_description;
 }
+

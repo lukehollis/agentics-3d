@@ -30,6 +30,7 @@ public class SimulationController : MonoBehaviour
         }
     }
 
+
     // Game State Management
     [Header("Game State")]
     public GameState state;
@@ -53,6 +54,19 @@ public class SimulationController : MonoBehaviour
     [SerializeField] private InventoryController inventoryController;
     public InventoryController InventoryController => inventoryController;
 
+    [Header("Start Screen")]
+    public GameObject startScreen;
+    public StartScreenController startScreenController;
+    public AudioSource startScreenBackgroundMusic;
+    public AudioSource startingSound;
+
+
+    [System.NonSerialized]
+    public bool isOfflineMode = false;
+    [System.NonSerialized]
+    public bool hasStarted = false;
+
+
 
     private void Awake()
     {
@@ -73,7 +87,7 @@ public class SimulationController : MonoBehaviour
         inventoryController = GetComponent<InventoryController>();
         
         // Get other components
-        player = FindObjectOfType<Player3D>();
+        player = FindObjectOfType<Player>();
 
         // Get time-related components
         timeline = GetComponent<Timeline>();
@@ -139,5 +153,31 @@ public class SimulationController : MonoBehaviour
     public void Resume()
     {
         Time.timeScale = 1f;
+    }
+
+    public void SetOfflineMode(bool isOffline)
+    {
+        Debug.Log("SetOfflineMode in SimulationController");
+        isOfflineMode = isOffline;
+    }
+
+    public void SetHasStarted(bool hasStarted)
+    {
+        this.hasStarted = hasStarted;
+    }
+
+    public void HandleGameLoaded()
+    {
+        // play the starting sound
+        if (startingSound != null)  
+        {
+            startingSound.Play();
+        }
+
+        if (!isOfflineMode && !hasStarted)
+        {
+            startScreenController.StartGame();
+        }
+
     }
 }

@@ -1,38 +1,35 @@
 {
-    "day_overview": "Take care of my farm and spend time with my family",
+    "day_overview": "Live a good day going to work working hard and coming home to rest, then go to the gym at night after dinner, and then sleep",
     "actions": [
-        {
-            "action": "Harvest olives",
-            "emoji": "🫒",
-            "location": "Olive Orchard",
-            "duration": 180,
-            "subtasks": [
-                {
-                    "task": "Check olive ripeness",
-                    "emoji": "👀",
-                    "sub_location": "NORTH",
-                    "animation": "idle" 
-                },
-                {
-                    "task": "Collect ripe olives",
-                    "emoji": "🧺",
-                    "sub_location": "CENTER",
-                    "animation": "hacking"
-                }
-            ]
-        },
-        {
-            "action": "Ask Simichidas how his day is going",
-            "emoji": "💬",
-            "location": "Simichidas",
-            "duration": 60,
-            "subtasks": [
-                {
-                    "task": "Start conversation",
-                    "emoji": "💭",
-                    "animation": "idle"
-                }
-            ]
-        }
+      {
+        "action": "Eat breakfast and do morning routine",
+        "emoji": "🍳",
+        "location": "Home",
+        "duration": 15
+      },
+      {
+        "action": "Achieve great results at my job building software",
+        "emoji": "💻",
+        "location": "Work",
+        "duration": 120
+      },
+      {
+        "action": "Go to the gym after work",
+        "emoji": "🏋️",
+        "location": "Gym",
+        "duration": 30
+      },
+      {
+        "action": "Read and study",
+        "emoji": "📖",
+        "location": "Home",
+        "duration": 180
+      },
+      {
+        "action": "Sleep",
+        "emoji": "💤",
+        "location": "Home",
+        "duration": 180
+      }
     ]
-}
+  }

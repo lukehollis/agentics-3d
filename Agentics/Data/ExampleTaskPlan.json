@@ -1,10 +1,10 @@
 {
-    "action_overview": "Tend to the wheatfields",
+    "action_overview": "Go to work",
     "tasks": [
         {
-            "action": "Water the wheatfields",
-            "emoji": "💧",
-            "animation": "watering"
+            "action": "Take the train to work",
+            "emoji": "🚂",
+            "animation": "train"
         }
     ]
 }

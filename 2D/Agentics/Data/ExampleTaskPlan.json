@@ -1,0 +1,10 @@
+{
+    "action_overview": "Tend to the wheatfields",
+    "tasks": [
+        {
+            "action": "Water the wheatfields",
+            "emoji": "💧",
+            "animation": "watering"
+        }
+    ]
+}
