@@ -3,13 +3,17 @@
 
 This project is a work-in-progress implementing generalist agent training for Unity environments using the ML-Agents package to build realistic simulations. The goal is to be able to more easily have agents available for simulations for a wide range of purposes, especially in urban and transportation simulations.
 
-![Rome Simulator](https://iiif.mused.com/rome_simulator_mused.jpg/0,240,2048,854/990,/0/default.jpg)
+![Rome Simulator](https://iiif.mused.com/rome_simulator_mused.jpg/0,240,2048,854/800,/0/default.jpg)
 
 This is currently running the [Civilization Simulations](https://mused.com/explore/simulations/), simulating human history. You can also implement it easily with the [Happy Harvest](https://assetstore.unity.com/packages/essentials/tutorial-projects/happy-harvest-2d-sample-project-259218) 2d template from Unity.
 
-![BART Digital Twin](https://iiif.mused.com/digital_twin_bart.jpg/0,240,2048,854/990,/0/default.jpg)
+![BART Digital Twin](https://iiif.mused.com/digital_twin_bart.jpg/0,240,2048,854/800,/0/default.jpg)
 
 Now the package is also functional in 3D, used in the BART Digital Twin simulation project. [link soon](#)
+
+![roman_farm_simulator_neural_state_800w](https://github.com/user-attachments/assets/bd9e2a5e-8593-4f58-bbcc-a33e8d300aed)
+
+Individual characters can be controlled by policy and run inference on shader graph, then visualize their inner state in game.
 
 
 ## Getting Started
