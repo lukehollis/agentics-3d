@@ -1,9 +1,6 @@
 
 
 
-
-
-
 https://github.com/user-attachments/assets/bbc70ec7-9902-4900-9aa3-dae39689cfbc
 
 
@@ -31,6 +28,15 @@ https://github.com/user-attachments/assets/c42531ca-64e2-4ea9-92a5-a44fab5b04c9
 
 
 Individual characters can be controlled by policy and run inference on shader graph, then visualize their inner state in game.
+
+
+## Cognitive Architecture [in progress]
+
+![cognitive_architecture](https://github.com/user-attachments/assets/ae749a95-908a-4321-b750-5f5ee11df80a)
+
+Inspired by the CoALA Cognitive Architectures for Language Agents, the NPCs in the simulations build on a similar version of the language agents but only implement the language model for rational reflection on actions inferred from policy--so a "impulse" from the policy and then considered rational reflection from the language model. 
+
+
 
 
 ## Getting Started
@@ -94,6 +100,16 @@ This will automatically:
 }
 ```
 
+```
+@misc{sumers2023cognitive,
+      title={Cognitive Architectures for Language Agents}, 
+      author={Theodore Sumers and Shunyu Yao and Karthik Narasimhan and Thomas L. Griffiths},
+      year={2023},
+      eprint={2309.02427},
+      archivePrefix={arXiv},
+      primaryClass={cs.AI}
+}
+```
 
 ```
 @inproceedings{Park2023GenerativeAgents,  
