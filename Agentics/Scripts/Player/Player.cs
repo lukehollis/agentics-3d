@@ -10,6 +10,7 @@ public class Player : MonoBehaviour
     [SerializeField] private float accSprintMultiplier = 4f;
     [SerializeField] private float mouseSensitivity = 2f;
     [SerializeField] private float dampingCoefficient = 5f;
+    [SerializeField] private float maxSpeed = 20f;
     
     private Vector3 velocity;
     private float rotationX = 0f;
@@ -78,38 +79,37 @@ public class Player : MonoBehaviour
         lookInput = value.Get<Vector2>();
     }
 
-    public void OnVerticalMove(InputValue value)
+    public void OnUpDown(InputValue value)
     {
-        // Assuming you mapped Q/E to a composite or button with -1/1 values
         verticalMoveInput = value.Get<float>();
     }
 
     public void HandleUpdate()
     {
-        // Get the camera's forward direction including pitch
         Vector3 cameraForward = Camera.main.transform.forward;
         Vector3 cameraRight = Camera.main.transform.right;
         
-        // Zero out any vertical component of the right vector to keep strafing horizontal
         cameraRight.y = 0;
         cameraRight.Normalize();
-        
-        // Calculate movement direction from input using camera direction
-        Vector3 moveDirection = cameraRight * moveInput.x + 
-                              cameraForward * moveInput.y +
-                              Vector3.up * verticalMoveInput;
-        
-        // Apply acceleration and damping
-        velocity += moveDirection.normalized * acceleration * Time.deltaTime;
+
+        Vector3 moveDirection = cameraRight * moveInput.x 
+                              + cameraForward * moveInput.y 
+                              + Vector3.up * verticalMoveInput;
+
+        // Decide final acceleration based on shift
+        float adjustedAcceleration = Keyboard.current.leftShiftKey.isPressed 
+            ? acceleration * accSprintMultiplier 
+            : acceleration;
+
+        // Apply that acceleration
+        velocity += moveDirection.normalized * adjustedAcceleration * Time.deltaTime;
+
+        // Dampen velocity
         velocity = Vector3.Lerp(velocity, Vector3.zero, dampingCoefficient * Time.deltaTime);
-        
-        // Apply sprint multiplier if shift is held
-        if (Keyboard.current.leftShiftKey.isPressed)
-        {
-            velocity *= accSprintMultiplier;
-        }
-        
-        // Apply movement
+
+        // (Optionally clamp if you’d like a max speed)
+        velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
+
         transform.position += velocity * Time.deltaTime;
 
         // Handle mouse rotation when cursor is locked

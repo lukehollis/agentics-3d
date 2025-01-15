@@ -11,6 +11,7 @@ namespace Agentics
 
         [Header("Transportation Settings")]
         public float trainPreferenceWeight = 0.7f; // Higher value = more likely to take train
+        public bool enablePathVisualization = false; // Default to false for performance
         
         [Header("References")]
         public GameObject carGeometry;
@@ -74,6 +75,8 @@ namespace Agentics
             {
                 trainTime = CalculateTrainTime(nearestStation, destinationStation);
             }
+
+            // return TransportMode.Walking;
 
             // Choose fastest mode
             if (walkingTime <= carTime && walkingTime <= trainTime)
@@ -397,13 +400,14 @@ namespace Agentics
 
         private void UpdatePathVisualization()
         {
-            if (pathLineRenderer == null)
+            if (!enablePathVisualization || pathLineRenderer == null)
             {
-                Debug.LogError("PathLineRenderer");
                 return;
             }
 
             List<Vector3> pathPoints = new List<Vector3>();
+            
+            // Always use current position as first point
             pathPoints.Add(transform.position);
 
             switch (currentMode)
@@ -411,13 +415,17 @@ namespace Agentics
                 case TransportMode.Train:
                     // Add path to nearest station
                     BartStation nearestStation = FindNearestStation(transform.position);
-                    if (nearestStation != null)
+                    if (nearestStation != null && nearestStation.platform != null)
                     {
-                        pathPoints.Add(nearestStation.platform.position);
+                        // Only add station point if we're not already very close to it
+                        if (Vector3.Distance(transform.position, nearestStation.platform.position) > 1f)
+                        {
+                            pathPoints.Add(nearestStation.platform.position);
+                        }
                         
                         // Add path to destination station
                         BartStation destinationStation = FindNearestStation(destination);
-                        if (destinationStation != null)
+                        if (destinationStation != null && destinationStation.platform != null)
                         {
                             pathPoints.Add(destinationStation.platform.position);
                         }
@@ -430,7 +438,11 @@ namespace Agentics
                     if (startRoad != null)
                     {
                         Vector3 nearestRoadPoint = startRoad.GetNearestPoint(transform.position);
-                        pathPoints.Add(nearestRoadPoint);
+                        // Only add road point if we're not already very close to it
+                        if (Vector3.Distance(transform.position, nearestRoadPoint) > 1f)
+                        {
+                            pathPoints.Add(nearestRoadPoint);
+                        }
                         
                         // Add path to destination road point
                         Road endRoad = FindNearestRoad(destination);
@@ -443,8 +455,11 @@ namespace Agentics
                     break;
             }
 
-            // Add final destination
-            pathPoints.Add(destination);
+            // Only add final destination if we're not already very close to it
+            if (Vector3.Distance(transform.position, destination) > 1f)
+            {
+                pathPoints.Add(destination);
+            }
 
             // Update line renderer
             pathLineRenderer.positionCount = pathPoints.Count;

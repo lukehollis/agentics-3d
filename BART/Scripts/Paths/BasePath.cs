@@ -21,14 +21,15 @@ public abstract class BasePath : MonoBehaviour
         pathRenderer = pathObj.AddComponent<LineRenderer>();
         pathRenderer.startWidth = 0.2f;
         pathRenderer.endWidth = 0.2f;
-        pathRenderer.material = new Material(Shader.Find("Unlit/Color"));
-        pathRenderer.material.color = pathColor;
+        Material pathMaterial = new Material(Shader.Find("Unlit/Color"));
+        pathMaterial.color = pathColor;
+        pathRenderer.sharedMaterial = pathMaterial;
         
         // Make sure the line is always visible
         pathRenderer.receiveShadows = false;
         pathRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
         pathRenderer.allowOcclusionWhenDynamic = false;
-        pathRenderer.material.renderQueue = 4000;
+        pathRenderer.sharedMaterial.renderQueue = 4000;
         
         CreateNodeVisuals();
         UpdatePathVisualization();
@@ -55,7 +56,7 @@ public abstract class BasePath : MonoBehaviour
             Material nodeMaterial = new Material(Shader.Find("Unlit/Color"));
             nodeMaterial.color = pathColor;
             nodeMaterial.renderQueue = 4000;
-            nodeObj.GetComponent<MeshRenderer>().material = nodeMaterial;
+            nodeObj.GetComponent<MeshRenderer>().sharedMaterial = nodeMaterial;
             
             DestroyImmediate(nodeObj.GetComponent<SphereCollider>());
             nodeVisuals[i] = nodeObj;

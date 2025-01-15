@@ -74,9 +74,7 @@ LineRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Positions:
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 1}
+  m_Positions: []
   m_Parameters:
     serializedVersion: 3
     widthMultiplier: 1
@@ -97,7 +95,7 @@ LineRenderer:
       m_RotationOrder: 4
     colorGradient:
       serializedVersion: 2
-      key0: {r: 1, g: 1, b: 1, a: 1}
+      key0: {r: 0.3066038, g: 0.9396667, b: 1, a: 1}
       key1: {r: 1, g: 1, b: 1, a: 1}
       key2: {r: 1, g: 1, b: 1, a: 0}
       key3: {r: 0, g: 0, b: 0, a: 0}
@@ -136,6 +134,111 @@ LineRenderer:
   m_UseWorldSpace: 1
   m_Loop: 0
   m_ApplyActiveColorSpace: 1
+--- !u!1 &2901948036335033710
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 619659526422358404}
+  - component: {fileID: 7207537010772147834}
+  - component: {fileID: 2566957697653914834}
+  - component: {fileID: 3227032201811590525}
+  m_Layer: 0
+  m_Name: CharacterIndicator
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &619659526422358404
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2901948036335033710}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 10, y: 10, z: 10}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2258001031639228566}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!33 &7207537010772147834
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2901948036335033710}
+  m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!23 &2566957697653914834
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2901948036335033710}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 3db2ea6bbb5ee43d59b2814852eebfe1, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!135 &3227032201811590525
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2901948036335033710}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 0.5
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &7268074537929106438
 GameObject:
   m_ObjectHideFlags: 0
@@ -501,7 +604,7 @@ PrefabInstance:
     - target: {fileID: 2147501163821543058, guid: e7731e319bf5d884289e05d643be0d5f,
         type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4952115777352708583, guid: e7731e319bf5d884289e05d643be0d5f,
         type: 3}
@@ -511,7 +614,7 @@ PrefabInstance:
     - target: {fileID: 4952115777352708583, guid: e7731e319bf5d884289e05d643be0d5f,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 72.6
+      value: 63.9
       objectReference: {fileID: 0}
     - target: {fileID: 4952115777352708583, guid: e7731e319bf5d884289e05d643be0d5f,
         type: 3}
@@ -521,7 +624,7 @@ PrefabInstance:
     - target: {fileID: 4952115777352708583, guid: e7731e319bf5d884289e05d643be0d5f,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -118.8
+      value: -157.9
       objectReference: {fileID: 0}
     - target: {fileID: 4952115777352708583, guid: e7731e319bf5d884289e05d643be0d5f,
         type: 3}
@@ -561,7 +664,7 @@ PrefabInstance:
     - target: {fileID: 6239794473090571721, guid: e7731e319bf5d884289e05d643be0d5f,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7620271021023955913, guid: e7731e319bf5d884289e05d643be0d5f,
         type: 3}
@@ -585,6 +688,10 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 602096018585426680}
+    - targetCorrespondingSourceObject: {fileID: 4952115777352708583, guid: e7731e319bf5d884289e05d643be0d5f,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 619659526422358404}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 7620271021023955913, guid: e7731e319bf5d884289e05d643be0d5f,
         type: 3}
@@ -639,6 +746,9 @@ MonoBehaviour:
   ID: 141
   CharacterName: Ben
   Avatar: {fileID: 0}
+  healthConditions: []
+  immunityStrength: 1
+  isQuarantined: 0
   inventory:
     items: []
     activeItem: {fileID: 0}
@@ -658,12 +768,15 @@ MonoBehaviour:
   characterController: {fileID: 0}
   animator: {fileID: 6112771375699759815}
   characterInfoPanel: {fileID: 1660080744938938211}
+  transportationController: {fileID: 0}
+  navMeshAgent: {fileID: 0}
   interactionRadius: 2
   interactableLayers:
     serializedVersion: 2
     m_Bits: 0
   SpeedMultiplier: 1
   targetPos: {x: 0, y: 0, z: 0}
+  moveSpeed: 3.5
   currentDayPlan:
     day_overview: 
     actions: []
@@ -674,6 +787,7 @@ MonoBehaviour:
     tasks: []
   currentActionTasks:
     tasks: []
+  characterIndicator: {fileID: 2901948036335033710}
   taskIndicator: {fileID: 8943931655183587335}
   initialDayPlanJson: "{\n    \"day_overview\": \"Live a good day going to work working
     hard and coming home to rest, then go to the gym at night after dinner, and then
@@ -687,7 +801,7 @@ MonoBehaviour:
     \"action\": \"Sleep\",\n            \"emoji\": \"\U0001F4A4\",\n            \"location\":
     \"Home\",\n            \"duration\": 180\n        }\n    ]\n}"
   initialActionTasksJson: 
-  initialDialogOpener: sup
+  initialDialogOpener: Hello!
   sleepWakeMode: wake
   interruptedTaskEmoji: 
   wasNavigating: 0

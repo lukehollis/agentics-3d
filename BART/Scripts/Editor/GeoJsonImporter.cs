@@ -327,6 +327,10 @@ public class GeoJsonImporter : EditorWindow
                             road.nodes.Add(node.transform);
                         }
                     }
+
+                    // Force create path visualization in editor
+                    road.Awake();
+                    EditorUtility.SetDirty(road);
                     createdRoads++;
                 }
             }
@@ -407,11 +411,12 @@ public class GeoJsonImporter : EditorWindow
                 
                 RailTrack track = trackObj.AddComponent<RailTrack>();
                 
-                // Set track color from properties
+                // Set track color from properties BEFORE calling Awake
                 string colorHex = feature["properties"]["color"]?.ToString() ?? "#FFFFFF";
                 if (ColorUtility.TryParseHtmlString(colorHex, out Color trackColor))
                 {
                     track.lineColor = trackColor;
+                    track.pathColor = trackColor; // Set both colors to ensure proper initialization
                 }
                 
                 // Add nodes along the track
@@ -427,6 +432,10 @@ public class GeoJsonImporter : EditorWindow
                     
                     track.nodes.Add(node.transform);
                 }
+
+                // Force create path visualization in editor
+                track.Awake();
+                EditorUtility.SetDirty(track);
             }
             else if (feature["geometry"]["type"].ToString() == "Point")
             {

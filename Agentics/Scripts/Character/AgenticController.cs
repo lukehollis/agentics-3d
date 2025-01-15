@@ -24,11 +24,13 @@ namespace Agentics
         public LayerMask interactableLayers;
         public float SpeedMultiplier = 1f;
         public Vector3 targetPos;
+        private float moveSpeed = 3.5f; // Add this field to control movement speed
 
         [Header("Planning")]
         public DayPlan currentDayPlan;
         public DayPlanAction currentDayPlanAction;
         public ActionTaskList currentActionTasks;
+        public GameObject characterIndicator;
         public GameObject taskIndicator;
         
         [TextArea(minLines: 5, maxLines: 20)]
@@ -66,17 +68,67 @@ namespace Agentics
             InDialog
         }
 
+        private Material characterIndicatorMaterial;
+        private Color healthyColor = Color.white;
+        private Color infectedColor = new Color(0.5f, 0f, 0f, 1f); // Dark red
+
+        private float characterHeight = 2f; // Height above ground to maintain
+        private float maxRaycastDistance = 1000f; // Maximum distance to check for ground
+        private float currentElevation; // Track current elevation when no ground is found
+
         protected virtual void Awake()
         {
             character = GetComponent<AgenticCharacter>();
             characterController = GetComponent<CharacterController>();
             transportationController = GetComponent<TransportationController>();
 
+            // Get the indicator material
+            if (characterIndicator != null)
+            {
+                var renderer = characterIndicator.GetComponent<Renderer>();
+                if (renderer != null)
+                {
+                    characterIndicatorMaterial = renderer.material;
+                    // Make sure this material is set to a queue that renders on top
+                    renderer.material.renderQueue = 4000;
+                    UpdateIndicatorColor();
+                }
+                else
+                {
+                    Debug.LogError($"No Renderer found on characterIndicator for {character.CharacterName}");
+                }
+            }
+            else
+            {
+                Debug.LogError($"No characterIndicator assigned for {character.CharacterName}");
+            }
+
             // initial state is idle
             SetState(CharacterState.Idle);
 
             // character must always have initial plan
             UpdatePlan(initialDayPlanJson);
+
+            // Initialize current elevation
+            currentElevation = transform.position.y;
+            
+            // Disable gravity on character controller since we're handling elevation
+            characterController.slopeLimit = 90f;
+            characterController.stepOffset = 0.3f;
+            characterController.minMoveDistance = 0f;
+        }
+
+        private void Start()
+        {
+            if (characterIndicator != null)
+            {
+                var renderer = characterIndicator.GetComponent<Renderer>();
+                if (renderer != null && renderer.material != null)
+                {
+                    // Make sure this material is set to a queue that renders on top (3000 is Transparent, 4000 is Overlay)
+                    renderer.material.renderQueue = 4000;
+                }
+            }
         }
 
         protected virtual void Update()
@@ -84,6 +136,8 @@ namespace Agentics
             // Only check movement and start new actions if not in dialog
             if (currentState != CharacterState.InDialog)
             {
+                // Update ground position every frame
+                UpdateGroundPosition();
                 
                 if (
                     currentState == CharacterState.Idle 
@@ -92,6 +146,23 @@ namespace Agentics
                 )
                 {
                     currentActionCoroutine = StartCoroutine(ExecuteCurrentAction());
+                }
+            }
+
+            // Check distance to player and scale indicator
+            if (characterIndicator != null)
+            {
+                GameObject player = GameObject.FindGameObjectWithTag("Player");
+                if (player != null)
+                {
+                    float distanceToPlayer = Vector3.Distance(transform.position, player.transform.position);
+                    Vector3 indicatorScale = characterIndicator.transform.localScale;
+                    
+                    // Set scale based on distance
+                    float targetScale = distanceToPlayer <= 100f ? 1f : 10f;
+                    indicatorScale = Vector3.one * targetScale;
+                    
+                    characterIndicator.transform.localScale = indicatorScale;
                 }
             }
         }
@@ -362,13 +433,16 @@ namespace Agentics
         {
             Debug.Log("Setting destination: " + position);
             targetPos = position;
-            // Set state to Moving
-            SetState(CharacterState.Moving);
-
-            // Calculate direction vector
-            Vector3 direction = (position - transform.position).normalized;
             
-            // Use SimpleMove with direction and speed
+            // Calculate direction vector (only X and Z)
+            Vector3 direction = (position - transform.position);
+            direction.y = 0; // Ignore vertical component for movement direction
+            direction.Normalize();
+            
+            // Update ground position/elevation
+            UpdateGroundPosition();
+            
+            // Move using CharacterController
             characterController.SimpleMove(direction * moveSpeed * SpeedMultiplier);
             
             // Face the movement direction
@@ -529,7 +603,55 @@ namespace Agentics
             characterInfoPanel.SetActive(false);
         }
 
-        private float moveSpeed = 2f; // Add this field to control movement speed
+        public void UpdateIndicatorColor()
+        {
+            if (characterIndicatorMaterial != null)
+            {
+                Debug.Log($"Updating indicator color for {character.CharacterName}. Has conditions: {character.healthConditions.Count > 0}");
+                characterIndicatorMaterial.color = character.healthConditions.Count > 0 ? 
+                    infectedColor : healthyColor;
+            }
+            else
+            {
+                Debug.LogError($"No material found for character indicator on {character.CharacterName}");
+            }
+        }
+
+        private void UpdateGroundPosition()
+        {
+            Vector3 rayStart = transform.position + Vector3.up * 10f; // Start above current position
+            RaycastHit hitInfo;
+            
+            // Cast ray downward to find ground
+            if (Physics.Raycast(rayStart, Vector3.down, out hitInfo, maxRaycastDistance))
+            {
+                // Check if the hit object is a Cesium tile
+                // we can't use teh cesium georeference... just use any meshrenderer 
+                if (hitInfo.transform.IsChildOf(FindObjectOfType<MeshRenderer>().transform))
+                {
+                    // Set position to hit point plus character height
+                    Vector3 newPosition = transform.position;
+                    newPosition.y = hitInfo.point.y + characterHeight;
+                    transform.position = newPosition;
+                    currentElevation = newPosition.y;
+                }
+                else
+                {
+                    // If not hitting Cesium terrain, maintain current elevation
+                    Vector3 newPosition = transform.position;
+                    newPosition.y = currentElevation;
+                    transform.position = newPosition;
+                }
+            }
+            else
+            {
+                // No ground found, maintain current elevation
+                Vector3 newPosition = transform.position;
+                newPosition.y = currentElevation;
+                transform.position = newPosition;
+            }
+        }
+
     }
 
 }

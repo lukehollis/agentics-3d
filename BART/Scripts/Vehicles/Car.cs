@@ -4,6 +4,7 @@ public class Car : BaseVehicle
 {
     public Road road;
     public int currentLane = 0;
+    public bool startAtRandomPositionOnRoad = false;
     
     private bool isActive = false;
     private Vector3 startPosition;
@@ -13,18 +14,25 @@ public class Car : BaseVehicle
 
     public void StartJourneyToPositions(Vector3 start, Vector3 target)
     {
+        Debug.Log($"Car starting journey from {start} to {target}");
         startPosition = start;
         targetPosition = target;
         
-        // Find the initial distance along the road that corresponds to our start position
-        distanceTraveled = road.GetDistanceAlongPath(start);
-        transform.position = road.GetPositionAtDistance(distanceTraveled, currentLane);
+        if (!startAtRandomPositionOnRoad)
+        {
+            distanceTraveled = road.GetDistanceAlongPath(start);
+            transform.position = road.GetPositionAtDistance(distanceTraveled, currentLane);
+            Debug.Log($"Starting at distance: {distanceTraveled}");
+        }
         
         isActive = true;
         currentSpeed = speed;
         
-        // Register with vehicle manager
-        VehicleManager.Instance.RegisterVehicle(this, road);
+        // Only register if we haven't already in Start
+        if (!startAtRandomPositionOnRoad)
+        {
+            VehicleManager.Instance.RegisterVehicle(this, road);
+        }
     }
 
     public void EndJourney()
@@ -37,6 +45,14 @@ public class Car : BaseVehicle
     protected override void Start()
     {
         base.Start();
+        currentSpeed = speed;
+        
+        if (startAtRandomPositionOnRoad && road != null)
+        {
+            distanceTraveled = VehicleManager.Instance.GetRandomStartingDistance(road);
+            transform.position = road.GetPositionAtDistance(distanceTraveled, currentLane);
+            VehicleManager.Instance.RegisterVehicle(this, road);
+        }
     }
 
     protected void OnDestroy()
@@ -48,15 +64,7 @@ public class Car : BaseVehicle
 
     public override void UpdatePosition(float deltaTime)
     {
-        if (road == null || isPaused || !isActive) return;
-
-        // Check if we've reached the target position
-        if (Vector3.Distance(transform.position, targetPosition) <= ARRIVAL_THRESHOLD)
-        {
-            Debug.Log("Reached target position");
-            EndJourney();
-            return;
-        }
+        if (road == null || isPaused) return;
 
         // Check distance to vehicle ahead
         float forwardDistance = CheckForwardDistance(road, distanceTraveled, currentLane);
@@ -64,22 +72,23 @@ public class Car : BaseVehicle
         // Adjust speed based on forward distance
         currentSpeed = AdjustSpeed(forwardDistance);
 
-        // Move along the road
+        // Move the car 
         distanceTraveled += currentSpeed * deltaTime;
-        Vector3 currentTargetPos = road.GetPositionAtDistance(distanceTraveled, currentLane);
+        Vector3 targetPosition = road.GetPositionAtDistance(distanceTraveled, currentLane);
         Vector3 lookAheadPos = road.GetPositionAtDistance(distanceTraveled + 1f, currentLane);
         
-        transform.position = currentTargetPos;
+        transform.position = targetPosition;
         
-        if ((lookAheadPos - currentTargetPos).sqrMagnitude > 0.001f)
+        if ((lookAheadPos - targetPosition).sqrMagnitude > 0.001f)
         {
-            Quaternion targetRotation = Quaternion.LookRotation(lookAheadPos - currentTargetPos);
+            Quaternion targetRotation = Quaternion.LookRotation(lookAheadPos - targetPosition);
             transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, rotationSpeed * deltaTime);
         }
     }
 
     public bool HasReachedDestination()
     {
-        return !isActive || Vector3.Distance(transform.position, targetPosition) <= ARRIVAL_THRESHOLD;
+        // return !isActive || Vector3.Distance(transform.position, targetPosition) <= ARRIVAL_THRESHOLD;
+        return false;
     }
 } 

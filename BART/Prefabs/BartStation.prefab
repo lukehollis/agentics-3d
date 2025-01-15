@@ -18,6 +18,11 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 10
       objectReference: {fileID: 0}
+    - target: {fileID: 8971895519250024059, guid: bbc00e7cfcda8cd4b9580159c5e77ecf,
+        type: 3}
+      propertyPath: m_TagString
+      value: Station
+      objectReference: {fileID: 0}
     - target: {fileID: 8971895519250389595, guid: bbc00e7cfcda8cd4b9580159c5e77ecf,
         type: 3}
       propertyPath: m_RootOrder
@@ -26,17 +31,17 @@ PrefabInstance:
     - target: {fileID: 8971895519250389595, guid: bbc00e7cfcda8cd4b9580159c5e77ecf,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -185
+      value: 40123.938
       objectReference: {fileID: 0}
     - target: {fileID: 8971895519250389595, guid: bbc00e7cfcda8cd4b9580159c5e77ecf,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 69.68567
       objectReference: {fileID: 0}
     - target: {fileID: 8971895519250389595, guid: bbc00e7cfcda8cd4b9580159c5e77ecf,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -575
+      value: 25081.25
       objectReference: {fileID: 0}
     - target: {fileID: 8971895519250389595, guid: bbc00e7cfcda8cd4b9580159c5e77ecf,
         type: 3}
@@ -75,7 +80,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 8971895519250389595, guid: bbc00e7cfcda8cd4b9580159c5e77ecf,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 0}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 8971895519250024059, guid: bbc00e7cfcda8cd4b9580159c5e77ecf,
         type: 3}
@@ -107,3 +116,7 @@ MonoBehaviour:
   stationColor: {r: 1, g: 1, b: 1, a: 1}
   servingLines: []
   isTransferStation: 0
+  platform: {fileID: 0}
+  platformWidth: 3
+  platformLength: 20
+  allowRuntimeMovement: 1

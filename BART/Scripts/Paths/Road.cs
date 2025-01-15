@@ -10,8 +10,10 @@ public class Road : BasePath
     private LineRenderer[] laneRenderers;
     private LineRenderer[] laneDividers;
     
-    private void Awake()
+    public override void Awake()
     {
+        base.Awake();  // Call BasePath's Awake first
+        
         // Create line renderers for each lane
         laneRenderers = new LineRenderer[numLanes];
         // Create dividers between lanes (numLanes - 1 dividers needed)
