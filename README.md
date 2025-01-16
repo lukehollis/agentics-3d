@@ -62,6 +62,44 @@ Agents use a combination of:
 
 ## SEIR Simulation
 
+The SEIR (Susceptible, Exposed, Infectious, Recovered) module integrates epidemiological modeling with agent-based simulation to model disease spread in urban environments. This integration allows for realistic modeling of how transportation patterns and urban mobility affect disease transmission.
+
+https://github.com/user-attachments/assets/38f2ad40-e490-4d00-9eb2-269f6b6e0596
+
+
+## Networked State Management System
+
+Inspired by projects like Photon for Unity networked state management, the state management system orchestrates persistent offline networked states through interconnected components in Unity and the backend (Python/Django connected via websocket) that work together to create a cohesive game world.
+
+The Django repo for the backend is at https://github.com/lukehollis/agentics-backend, to be public soon -- if you want access, just request.
+
+#### Conversations
+The conversation system tracks all character-player interactions by maintaining a detailed message history with timestamps. It supports different types of communication (SPATIAL, PRIVATE) and maintains visibility settings to control information flow between characters and players. Each conversation is tied to specific game sessions and users, allowing for contextual interactions that persist across sessions.
+
+#### Memory System
+Characters maintain memories through a hierarchical storage system with three distinct priority levels. The highest priority memories (Priority 1) retain the ten most recent or important events. Medium priority memories (Priority 2) store the last five significant but less crucial events, while background memories (Priority 3) keep the last three events that provide general context. Each memory record contains a description, location, timestamp, priority level, and associations with specific characters, users, and game sessions.
+
+
+https://github.com/user-attachments/assets/68d52aa0-2de4-4895-8844-9ac24141851f
+
+
+#### Event System
+The event system records significant occurrences within the game world. Each event captures detailed information including the type of event, its description, location, involved characters, precise timestamp, and the game session context in which it occurred. This creates a historical record that influences future character behaviors and world state.
+
+#### World State
+The world state maintains comprehensive data about the game environment, including the time period, detailed descriptions, environmental conditions, and the complex web of NPCs and their relationships. It tracks available locations and waypoints, while managing the progression of quests and storylines. This creates a persistent environment for characters -- which responds to player and character actions between play sessions.
+
+#### Character State
+Individual character states encompass personal attributes, family relationships, current location, and movement patterns. The system tracks daily plans and current actions while maintaining a record of memory events and conversation history. This creates deeply contextualized characters whose behaviors reflect their experiences and relationships.
+
+#### Save/Load System
+Game persistence is handled through a comprehensive save/load system that maintains player data, time information, environmental modifications, scene details, character states, and overall world condition. This allows seamless continuation of gameplay across multiple sessions while maintaining world consistency.
+
+
+
+
+https://github.com/user-attachments/assets/6887b20e-4f93-4ed8-85f2-05cdb81efdd1
+
 
 
 
