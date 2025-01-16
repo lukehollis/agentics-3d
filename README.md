@@ -106,6 +106,9 @@ The world state maintains comprehensive data about the game environment, includi
 https://github.com/user-attachments/assets/6887b20e-4f93-4ed8-85f2-05cdb81efdd1
 
 
+## Active Development 
+
+This project is in active development in public, and I'll update it here for anyone that's interested, but because I release code separately from the 3d art, it does not yet contain a complete functioning standalone project. If you're interested in using the Google Maps photorealistic geotiles, I recommend checking out the [Cesium project](https://github.com/CesiumGS/) for your desired engine. 
 
 
 ## Getting Started
@@ -147,7 +150,7 @@ This will automatically:
 
 ## Getting Started
 0. Add the Agentics package to your Unity project
-0.a -- if working in 2D, you may get further with the 2D specific version 
+0.a If working in 2D, you may get further with the 2D specific version in this repo
 1. Add the `AgenticController` component to your character, and configure with CharacterController, NavMeshAgent, and any other components you need
 2. Set an initial day plan and waypoints for the agent
 3. Set up training configuration with the python directory in the root of this repo
