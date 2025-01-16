@@ -86,7 +86,10 @@ Inspired by projects like Photon for Unity networked state management, the state
 The Django repo for the backend is at https://github.com/lukehollis/agentics-backend, to be public soon -- if you want access, just request.
 
 #### Conversations
-The conversation system tracks all character-player interactions by maintaining a detailed message history with timestamps. It supports different types of communication (SPATIAL, PRIVATE) and maintains visibility settings to control information flow between characters and players. Each conversation is tied to specific game sessions and users, allowing for contextual interactions that persist across sessions.
+The conversation system tracks all character-player interactions by maintaining a detailed message history with timestamps. It supports different types of communication (SPATIAL, DIGITAL) and maintains visibility settings to control information flow between characters and players. Each conversation is tied to specific game sessions and users, allowing for contextual interactions that persist across sessions.
+
+If time-period appropriate, characters have the option to use simulated digital means of communication that are a simplified version of our own. They can do 1-1 agent dialog, group communication, or public posting on "The Feed," similar to a social network. Other characters can choose to check the Feed as one of their behaviors and like/dialog with public posts. 
+
 
 #### Memory System
 Characters maintain memories through a hierarchical storage system with three priority levels: high, medium, and low. Currently in dialog, the most recent ten high priority memories, five medium priority memories, and last three background memories provide general context. Each memory record contains a description, location, timestamp, priority level (ranked separately with a language model), and associations with specific characters, users, and game sessions.
@@ -95,18 +98,8 @@ Characters maintain memories through a hierarchical storage system with three pr
 https://github.com/user-attachments/assets/68d52aa0-2de4-4895-8844-9ac24141851f
 
 
-#### Event System
-The event system records significant occurrences within the game world. Each event captures detailed information including the type of event, its description, location, involved characters, precise timestamp, and the game session context in which it occurred. This creates a historical record that influences future character behaviors and world state.
-
 #### World State
-The world state maintains comprehensive data about the game environment, including the time period, detailed descriptions, environmental conditions, and the complex web of NPCs and their relationships. It tracks available locations and waypoints, while managing the progression of quests and storylines. This creates a persistent environment for characters -- which responds to player and character actions between play sessions.
-
-#### Character State
-Individual character states encompass personal attributes, family relationships, current location, and movement patterns. The system tracks daily plans and current actions while maintaining a record of memory events and conversation history. This creates deeply contextualized characters whose behaviors reflect their experiences and relationships.
-
-#### Save/Load System
-Game persistence is handled through a comprehensive save/load system that maintains player data, time information, environmental modifications, scene details, character states, and overall world condition. This allows seamless continuation of gameplay across multiple sessions while maintaining world consistency.
-
+The world state maintains comprehensive data about the game environment, including the time period, environmental conditions, and the relations and data of characters. The backend contains a basic represetnation of spatial information in the Unity 2d or 3d environments while managing the progression of quests and storylines. This creates a persistent environment for characters -- which responds to player and character actions between play sessions.
 
 
 
