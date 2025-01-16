@@ -1,9 +1,7 @@
 
 
 
-https://github.com/user-attachments/assets/bbc70ec7-9902-4900-9aa3-dae39689cfbc
-
-
+https://github.com/user-attachments/assets/d730fd1c-5b08-4699-ad8f-e1a0e8aa44e2
 
 
 # Unity Agentics - RL-Agents Based Character AI System
@@ -19,22 +17,50 @@ This is currently running the [Civilization Simulations](https://mused.com/explo
 
 Now the package is also functional in 2D and 3D, used in the BART Digital Twin simulation project. [link soon](#)
 
-![roman_farm_simulator_neural_state_800w](https://github.com/user-attachments/assets/bd9e2a5e-8593-4f58-bbcc-a33e8d300aed)
-
-
-
-https://github.com/user-attachments/assets/c42531ca-64e2-4ea9-92a5-a44fab5b04c9
-
-
-
 Individual characters can be controlled by policy and run inference on shader graph, then visualize their inner state in game.
-
 
 ## Cognitive Architecture [in progress]
 
 ![cognitive_architecture](https://github.com/user-attachments/assets/ae749a95-908a-4321-b750-5f5ee11df80a)
 
 Inspired by the CoALA Cognitive Architectures for Language Agents, the NPCs in the simulations build on a similar version of the language agents but only implement the language model for rational reflection on actions inferred from policy--so a "impulse" from the policy and then considered rational reflection from the language model. 
+
+
+![roman_farm_simulator_neural_state_800w](https://github.com/user-attachments/assets/bd9e2a5e-8593-4f58-bbcc-a33e8d300aed)
+
+
+https://github.com/user-attachments/assets/c42531ca-64e2-4ea9-92a5-a44fab5b04c9
+
+
+## Mode shift
+
+The Mode Shift module simulates how individual agents make transportation choices in urban environments. Each agent uses a multi-factor decision model to choose between available transportation modes (car, public transit, walking, cycling) based on:
+Decision Factors
+
+* Travel time and distance
+* Cost considerations
+* Weather conditions
+* Individual agent preferences
+* Time of day
+* Current traffic conditions
+* Transit service availability
+
+
+
+https://github.com/user-attachments/assets/ae6daae7-9fb0-4321-ac94-e252f89cb40c
+
+
+
+### Implementation
+Agents use a combination of:
+
+* Reinforcement learning policy for immediate reactions to environment changes
+* Language model reflection for longer-term transportation planning
+* Historical behavior patterns that influence future choices
+
+
+
+## SEIR Simulation
 
 
 
