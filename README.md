@@ -19,7 +19,7 @@ Now the package is also functional in 2D and 3D, used in the BART Digital Twin s
 
 Individual characters can be controlled by policy and run inference on shader graph, then visualize their inner state in game.
 
-## Cognitive Architecture [in progress]
+## Cognitive Architecture
 
 ![cognitive_architecture](https://github.com/user-attachments/assets/ae749a95-908a-4321-b750-5f5ee11df80a)
 
@@ -31,6 +31,18 @@ Inspired by the CoALA Cognitive Architectures for Language Agents, the NPCs in t
 
 https://github.com/user-attachments/assets/c42531ca-64e2-4ea9-92a5-a44fab5b04c9
 
+
+## Instatiating Characters in Environments
+
+You can generate a diverse population of characters representing your required demographic landscape based on realworld data inputs. The character creation process synthesizes data from multiple sources, including US Census Bureau demographics, Bureau of Labor Statistics employment data, and local transportation studies.
+
+Each generated character is includes contextual details including their personality, age, profession, education level, commute patterns, family relationships, backstory (generalized and with episodic highlights), and other information. 
+
+![NPC Spawn](https://iiif.mused.com/bart_simulation_spawning_npcs.jpg/0,240,2048,854/800,/0/default.jpg)
+
+The Unity NPC Spawner Tool provided is an Editor tool that easily allows you to customize your NPC creation process on your navmesh within a bounding box. 
+
+The generation process begins by establishing family units, then populating them with individual characters whose attributes are derived from weighted distributions matching specified input demographics. Educational backgrounds influence personality assignments, while employment roles and industries are selected to mirror the region's actual workforce composition.
 
 ## Mode shift
 
