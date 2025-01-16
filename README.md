@@ -38,7 +38,7 @@ You can generate a diverse population of characters representing your required d
 
 Each generated character is includes contextual details including their personality, age, profession, education level, commute patterns, family relationships, backstory (generalized and with episodic highlights), and other information. 
 
-![NPC Spawn](https://iiif.mused.com/bart_simulation_spawning_npcs.jpg/0,240,2048,854/800,/0/default.jpg)
+![NPC Spawn](https://iiif.mused.com/bart_simulation_spawning_npcs.jpg/full/800,/0/default.jpg)
 
 The Unity NPC Spawner Tool provided is an Editor tool that easily allows you to customize your NPC creation process on your navmesh within a bounding box. 
 
