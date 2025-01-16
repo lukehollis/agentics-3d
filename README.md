@@ -89,7 +89,7 @@ The Django repo for the backend is at https://github.com/lukehollis/agentics-bac
 The conversation system tracks all character-player interactions by maintaining a detailed message history with timestamps. It supports different types of communication (SPATIAL, PRIVATE) and maintains visibility settings to control information flow between characters and players. Each conversation is tied to specific game sessions and users, allowing for contextual interactions that persist across sessions.
 
 #### Memory System
-Characters maintain memories through a hierarchical storage system with three distinct priority levels. The highest priority memories (Priority 1) retain the ten most recent or important events. Medium priority memories (Priority 2) store the last five significant but less crucial events, while background memories (Priority 3) keep the last three events that provide general context. Each memory record contains a description, location, timestamp, priority level, and associations with specific characters, users, and game sessions.
+Characters maintain memories through a hierarchical storage system with three priority levels: high, medium, and low. Currently in dialog, the most recent ten high priority memories, five medium priority memories, and last three background memories provide general context. Each memory record contains a description, location, timestamp, priority level (ranked separately with a language model), and associations with specific characters, users, and game sessions.
 
 
 https://github.com/user-attachments/assets/68d52aa0-2de4-4895-8844-9ac24141851f
