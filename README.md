@@ -43,7 +43,6 @@ The generation process begins by establishing family units, then populating them
 ## Mode shift
 
 The Mode Shift module simulates how individual agents make transportation choices in urban environments. Each agent uses a multi-factor decision model to choose between available transportation modes (car, public transit, walking, cycling) based on:
-Decision Factors
 
 * Travel time and distance
 * Cost considerations
