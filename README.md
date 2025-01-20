@@ -23,7 +23,7 @@ Individual characters can be controlled by policy, running inference in engine, 
 
 ![cognitive_architecture](https://github.com/user-attachments/assets/ae749a95-908a-4321-b750-5f5ee11df80a)
 
-Inspired by the CoALA Cognitive Architectures for Language Agents, the NPCs in the simulations build on a similar version of the language agents but only implement the language model for rational reflection on actions inferred from policy--so a "impulse" from the policy and then considered rational reflection from the language model. 
+Inspired by the [CoALA Cognitive Architectures for Language Agents](https://arxiv.org/abs/2309.02427), the NPCs in the simulations build on a similar version of the language agents but only implement the language model for rational reflection on actions inferred from policy--so a "impulse" from the policy and then considered rational reflection from the language model. 
 
 https://github.com/user-attachments/assets/c42531ca-64e2-4ea9-92a5-a44fab5b04c9
 
