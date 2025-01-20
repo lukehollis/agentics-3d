@@ -4,10 +4,10 @@
 https://github.com/user-attachments/assets/d730fd1c-5b08-4699-ad8f-e1a0e8aa44e2
 
 
-# Unity Agentics - RL-Agents Based Character AI System
+# Generalist Character AI System for Simulating Social Situations
 
 
-This project is a work-in-progress implementing generalist agent training for Unity environments using the ML-Agents package to build realistic simulations. The goal is to be able to more easily have agents available for simulations for a wide range of purposes, especially in urban and transportation simulations.
+This project is a work-in-progress implementing generalist agent character training for Unity environments using the ML-Agents package to build realistic simulations. The goal is to be able to more easily have agents available for simulations for a wide range of purposes, especially in urban and transportation simulations.
 
 ![Rome Simulator](https://iiif.mused.com/rome_simulator_mused.jpg/0,240,2048,854/800,/0/default.jpg)
 
@@ -17,17 +17,13 @@ This is currently running the [Civilization Simulations](https://mused.com/explo
 
 Now the package is also functional in 2D and 3D, used in the BART Digital Twin simulation project. [link soon](#)
 
-Individual characters can be controlled by policy and run inference on shader graph, then visualize their inner state in game.
+Individual characters can be controlled by policy, running inference in engine, and interpret and plan actions with a language model, then visualize their inner state in game.
 
 ## Cognitive Architecture
 
 ![cognitive_architecture](https://github.com/user-attachments/assets/ae749a95-908a-4321-b750-5f5ee11df80a)
 
 Inspired by the CoALA Cognitive Architectures for Language Agents, the NPCs in the simulations build on a similar version of the language agents but only implement the language model for rational reflection on actions inferred from policy--so a "impulse" from the policy and then considered rational reflection from the language model. 
-
-
-![roman_farm_simulator_neural_state_800w](https://github.com/user-attachments/assets/bd9e2a5e-8593-4f58-bbcc-a33e8d300aed)
-
 
 https://github.com/user-attachments/assets/c42531ca-64e2-4ea9-92a5-a44fab5b04c9
 
@@ -36,7 +32,7 @@ https://github.com/user-attachments/assets/c42531ca-64e2-4ea9-92a5-a44fab5b04c9
 
 You can generate a diverse population of characters representing your required demographic landscape based on realworld data inputs. The character creation process synthesizes data from multiple sources, including US Census Bureau demographics, Bureau of Labor Statistics employment data, and local transportation studies.
 
-Each generated character is includes contextual details including their personality, age, profession, education level, commute patterns, family relationships, backstory (generalized and with episodic highlights), and other information. 
+Each generated character includes contextual details including their personality, age, profession, education level, commute patterns, family relationships, backstory (generalized and with episodic highlights), and other information. 
 
 ![NPC Spawn](https://iiif.mused.com/bart_simulation_spawning_npcs.jpg/full/800,/0/default.jpg)
 
