@@ -1,23 +1,28 @@
+https://github.com/user-attachments/assets/b3fd4137-17b8-458d-aa2b-62cfd00902fc
 
 
+# Generalist RL/ML AI System for Simulating Social Situations
+
+
+This project is a work-in-progress implementing generalist agent character training for game engine environments using a hybrid RL/ML approach to build realistic simulations. The goal is to be able to more easily have agents available for simulations for a wide range of purposes, especially in urban and transportation planning and supply chain logistics. It's currently in development for Unreal, Unity, and Three.js. 
+
+
+https://github.com/user-attachments/assets/5cee2ebb-da82-46d8-a1f8-ed9a8ac52a9d
+
+
+Example usage in supply chain and manufacturing simulations
 
 https://github.com/user-attachments/assets/d730fd1c-5b08-4699-ad8f-e1a0e8aa44e2
 
+Digital twin of the train system for the Bay Area Rapid Transit Link 21 team.
 
-# Generalist Character AI System for Simulating Social Situations
-
-
-This project is a work-in-progress implementing generalist agent character training for Unity environments using the ML-Agents package to build realistic simulations. The goal is to be able to more easily have agents available for simulations for a wide range of purposes, especially in urban and transportation simulations.
 
 ![Rome Simulator](https://iiif.mused.com/rome_simulator_mused.jpg/0,240,2048,854/800,/0/default.jpg)
 
 This is currently running the [Civilization Simulations](https://mused.com/explore/simulations/), simulating human history. You can also implement it easily with the [Happy Harvest](https://assetstore.unity.com/packages/essentials/tutorial-projects/happy-harvest-2d-sample-project-259218) 2d template from Unity.
 
-![BART Digital Twin](https://iiif.mused.com/digital_twin_bart.jpg/0,240,2048,854/800,/0/default.jpg)
 
-Now the package is also functional in 2D and 3D, used in the BART Digital Twin simulation project. [link soon](#)
-
-Individual characters can be controlled by policy, running inference in engine, and interpret and plan actions with a language model, then visualize their inner state in game.
+Individual characters can be controlled by RL policy, running inference in engine, and interpret and plan actions with a language model, then visualize their inner state in game.
 
 ## Cognitive Architecture
 
@@ -37,7 +42,7 @@ Each generated character includes contextual details including their personality
 
 ![NPC Spawn](https://iiif.mused.com/bart_simulation_spawning_npcs.jpg/full/800,/0/default.jpg)
 
-The Unity NPC Spawner Tool provided is an Editor tool that easily allows you to customize your NPC creation process on your navmesh within a bounding box. 
+The NPC Spawner Tool provided is an Editor tool that easily allows you to customize your NPC creation process on your navmesh within a bounding box. 
 
 The generation process begins by establishing family units, then populating them with individual characters whose attributes are derived from weighted distributions matching specified input demographics. Educational backgrounds influence personality assignments, while employment roles and industries are selected to mirror the region's actual workforce composition.
 
