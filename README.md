@@ -80,6 +80,18 @@ The SEIR (Susceptible, Exposed, Infectious, Recovered) module integrates epidemi
 https://github.com/user-attachments/assets/38f2ad40-e490-4d00-9eb2-269f6b6e0596
 
 
+
+## Thermal CFD Simulation (Unreal only)
+
+If you're building simulations for supply chain or manufacturing, you will likely end up needing to simulate thermal conditions for various purposes, such as server performance or cross assembly line interference. 
+
+
+https://github.com/user-attachments/assets/6a457168-6df0-4cf5-ae67-ad5047a77649
+
+In this example, for instance, a heat intensive process can be monitored to predict QA of car battery manufacturing while a spray is applied to a component of the battery in a separate part of the assembly line.
+
+
+
 ## Networked State Management System
 
 Inspired by projects like Photon for Unity networked state management, the state management system orchestrates persistent offline networked states through interconnected components in Unity and the backend (Python/Django connected via websocket) that work together to create a cohesive game world.
