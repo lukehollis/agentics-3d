@@ -1,10 +1,10 @@
 https://github.com/user-attachments/assets/b3fd4137-17b8-458d-aa2b-62cfd00902fc
 
 
-# Generalist RL/ML AI System for Simulating Social Situations
+# Generalist RL/ML AI System for Simulating Humans and Robotics
 
 
-This project is a work-in-progress implementing generalist agent character training for game engine environments using a hybrid RL/ML approach to build realistic simulations. The goal is to be able to more easily have agents available for simulations for a wide range of purposes, especially in urban and transportation planning and supply chain logistics. It's currently in development for Unreal, Unity, and Three.js. 
+This project is a work-in-progress implementing generalist agent  training for game engine environments using a hybrid RL/ML approach to build realistic simulations. The goal is to be able to more easily have agents available for simulations for a wide range of purposes, especially in urban and transportation planning and supply chain logistics. It's currently in development for Unreal, Unity, and Three.js. 
 
 
 https://github.com/user-attachments/assets/5cee2ebb-da82-46d8-a1f8-ed9a8ac52a9d
@@ -62,6 +62,7 @@ The Mode Shift module simulates how individual agents make transportation choice
 
 https://github.com/user-attachments/assets/ae6daae7-9fb0-4321-ac94-e252f89cb40c
 
+Example usage in the BART train system simulation https://github.com/lukehollis/bart-3d
 
 
 ### Implementation
@@ -98,6 +99,7 @@ Inspired by projects like Photon for Unity networked state management, the state
 
 The Django repo for the backend is at https://github.com/lukehollis/agentics-backend, to be public soon -- if you want access, just request.
 
+
 #### Conversations
 The conversation system tracks all character-player interactions by maintaining a detailed message history with timestamps. It supports different types of communication (SPATIAL, DIGITAL) and maintains visibility settings to control information flow between characters and players. Each conversation is tied to specific game sessions and users, allowing for contextual interactions that persist across sessions.
 
@@ -117,6 +119,8 @@ The world state maintains comprehensive data about the game environment, includi
 
 
 https://github.com/user-attachments/assets/6887b20e-4f93-4ed8-85f2-05cdb81efdd1
+
+BART train system simulation, coming soon at https://github.com/lukehollis/bart-3d
 
 
 ## Active Development 
