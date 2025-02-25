@@ -1,12 +1,11 @@
 https://github.com/user-attachments/assets/b3fd4137-17b8-458d-aa2b-62cfd00902fc
 
-Connected to Unreal game engine city samples for character behavior.
 
 
 # Generalist RL/ML AI System for Simulating Humans and Robotics
 
 
-This project is a work-in-progress implementing generalist agent training for game engine environments using a hybrid RL/ML approach to build realistic simulations. The goal is to be able to more easily have agents available for simulations for a wide range of purposes, especially in urban and transportation planning and supply chain logistics. It's currently in development for Unreal, Unity, and Three.js. 
+This project is a work-in-progress implementing generalist agent training for game engine environments using a hybrid RL/ML approach to build realistic simulations. The goal is to be able to more easily have agents available for simulations for a wide range of purposes, especially in urban and transportation planning and supply chain logistics. It's currently in development for Unreal, Unity, and Three.js and integrates with the Unreal city samples project.
 
 
 https://github.com/user-attachments/assets/5cee2ebb-da82-46d8-a1f8-ed9a8ac52a9d
