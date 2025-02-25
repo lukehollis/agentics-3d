@@ -147,22 +147,6 @@ pip install -r requirements.txt
 python src/collect.py
 ```
 
-## Training
-
-The training process follows two main stages that can be run with a single command:
-
-
-```bash
-python src/train.py 
-```
-
-This will automatically:
-
-1. **Train World Model**: Updates the world model on collected experiences from the Unity environment to better predict next observations, rewards, and episode terminations. The world model combines a VAE for compact state representation with an MDN-RNN for dynamics prediction.
-
-2. **Train Policy in Imagination**: Optimizes the agent's policy entirely inside the learned world model using actor-critic RL. This allows rapid policy improvement without additional environment interaction.
-
-
 
 # In Unity
 
